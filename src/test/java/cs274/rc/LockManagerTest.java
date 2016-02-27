@@ -54,4 +54,5 @@ public class LockManagerTest extends TestCase {
 		assertEquals(lockManager.getSharedLock().size(), 0);
 		assertEquals(lockManager.getExclusiveLock().size(), 0);
 	}
+	
 }
