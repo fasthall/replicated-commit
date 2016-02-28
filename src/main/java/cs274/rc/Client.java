@@ -80,6 +80,7 @@ public class Client extends Thread {
 
 	public void sendReadRequest(String transaction, String key, String data)
 			throws UnknownHostException, IOException {
+		readingPool = new ReadingPool(transaction, key);
 		// Send read request to all replicas
 		for (String replica : replicas) {
 			String[] hostnameAndPort = replica.split(":");
@@ -87,10 +88,10 @@ public class Client extends Thread {
 			int port = Integer.parseInt(hostnameAndPort[1]);
 			send(data, hostname, port);
 		}
-		readingPool = new ReadingPool(transaction, key);
 		while (readingPool.getSize() < (replicas.size() + 1) / 2) {
 			// Waiting data from majority
 		}
+		readingPool = null;
 	}
 
 	public void send(String data, String hostname, int port)
