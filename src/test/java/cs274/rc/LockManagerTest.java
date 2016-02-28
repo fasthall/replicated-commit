@@ -14,7 +14,7 @@ public class LockManagerTest extends TestCase {
 
 	public LockManagerTest(String testName) {
 		super(testName);
-		lockManager = new LockManager();
+		lockManager = LockManager.getInstance();
 	}
 
 	public static Test suite() {
@@ -54,5 +54,5 @@ public class LockManagerTest extends TestCase {
 		assertEquals(lockManager.getSharedLock().size(), 0);
 		assertEquals(lockManager.getExclusiveLock().size(), 0);
 	}
-	
+
 }

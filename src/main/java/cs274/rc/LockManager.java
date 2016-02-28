@@ -10,10 +10,18 @@ import java.util.List;
 
 public class LockManager {
 
+	private static LockManager instance;
 	private HashMap<String, List<String>> sharedLock;
 	private HashMap<String, String> exclusiveLock;
 
-	public LockManager() {
+	public static LockManager getInstance() {
+		if (instance == null) {
+			instance = new LockManager();
+		}
+		return instance;
+	}
+
+	private LockManager() {
 		setSharedLock(new HashMap<String, List<String>>());
 		setExclusiveLock(new HashMap<String, String>());
 	}
