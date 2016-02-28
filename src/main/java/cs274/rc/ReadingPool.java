@@ -15,13 +15,25 @@ public class ReadingPool {
 		list = new ArrayList<ReadingData>();
 	}
 
-	public void addData(String replica, String value, long version) {
+	public void addDataFromReplica(String replica, String value, long version) {
 		for (ReadingData data : list) {
 			if (data.replica.equals(replica)) {
 				return;
 			}
 		}
 		list.add(new ReadingData(replica, value, version));
+	}
+
+	public String getMostRecentValue() {
+		String value = null;
+		long version = 0;
+		for (ReadingData data : list) {
+			if (data.version > version) {
+				version = data.version;
+				value = data.value;
+			}
+		}
+		return value;
 	}
 
 	public int getSize() {

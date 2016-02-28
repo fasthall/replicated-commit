@@ -15,6 +15,8 @@ import junit.framework.TestSuite;
 public class CommunicationTest extends TestCase {
 
 	private int serverPort1 = 30001;
+	private int serverPort2 = 30002;
+	private int serverPort3 = 30003;
 	private int clientPort1 = 40001;
 
 	public CommunicationTest(String testName) {
@@ -43,23 +45,28 @@ public class CommunicationTest extends TestCase {
 			InterruptedException {
 		System.out.println("testReadRequest");
 		Server server1 = new Server("S1", serverPort1);
+		Server server2 = new Server("S2", serverPort2);
+		Server server3 = new Server("S3", serverPort3);
 		server1.start();
-		assertTrue(server1.isAlive());
+		server2.start();
+		server3.start();
 
-		ClusterManager clusterManager = ClusterManager.getInstance();
+		ClusterManager clusterManager = new ClusterManager();
 		clusterManager.addReplica("localhost", serverPort1);
+		clusterManager.addReplica("localhost", serverPort2);
+		clusterManager.addReplica("localhost", serverPort3);
 
-		Client client = new Client("C1", "localhost", clientPort1);
-		client.addReplica("localhost", serverPort1);
-		client.start();
+		Client client1 = new Client("C1", "localhost", clientPort1,
+				clusterManager);
+		client1.start();
 		Transaction t1 = new Transaction("T1");
 		t1.addReadOperation("X");
-		client.put(t1);
+		client1.put(t1);
 		// client.send("TEST DATA", "localhost", serverPort1);
 
 		// test stopping server
 		assertTrue(server1.isAlive());
-		client.send("exit", "localhost", serverPort1);
+		client1.send("exit", "localhost", serverPort1);
 		// Thread.sleep(50);
 		// assertFalse(server1.isAlive());
 	}

@@ -84,7 +84,7 @@ public class Server extends Thread {
 			// successfully set, return the latest version
 
 			// TODO get data from DB and send it back
-			String value = "dataFromDB";
+			String value = "dataFromDB" + System.currentTimeMillis();
 			long version = System.currentTimeMillis();
 			String data = REPLY_READ + " " + name + " " + transaction + " "
 					+ key + " " + value + " " + version;
@@ -108,6 +108,7 @@ public class Server extends Thread {
 				clientSocket.getOutputStream());
 		outToServer.writeBytes(data);
 		clientSocket.close();
+		System.out.println("Server " + name + " sent: " + data);
 	}
 
 }

@@ -10,26 +10,26 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cs274.rc.connection.ClusterManager;
+import cs274.rc.connection.ReplicaConnection;
+
 public class Client extends Thread {
 
 	private String name;
 	private String hostname;
 	private int port;
 	private ServerSocket serverSocket;
-	private List<String> replicas;
+	private ClusterManager clusterManager;
 
 	private ReadingPool readingPool;
 
-	public Client(String name, String hostname, int port) {
+	public Client(String name, String hostname, int port,
+			ClusterManager clusterManager) {
 		this.name = name;
 		this.hostname = hostname;
 		this.port = port;
-		replicas = new ArrayList<String>();
+		this.clusterManager = clusterManager;
 		readingPool = null;
-	}
-
-	public void addReplica(String hostname, int port) {
-		replicas.add(hostname + ":" + port);
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class Client extends Thread {
 					if (readingPool != null
 							&& cmd[2].equals(readingPool.getTransaction())
 							&& cmd[3].equals(readingPool.getKey())) {
-						readingPool.addData(cmd[1], cmd[4],
+						readingPool.addDataFromReplica(cmd[1], cmd[4],
 								Long.parseLong(cmd[5]));
 					}
 				}
@@ -70,9 +70,19 @@ public class Client extends Thread {
 		Operation operation = transaction.popOperation();
 		while (operation != null) {
 			if (operation.getAction() == Operation.READ) {
+				readingPool = new ReadingPool(transaction.getName(),
+						operation.getKey());
 				sendReadRequest(transaction.getName(), operation.getKey(),
 						operation.toString() + " " + transaction.getName()
 								+ " " + hostname + " " + port);
+				while (readingPool.getSize() < clusterManager
+						.getMajorityNumber()) {
+					// Waiting data from majority
+				}
+				String value = readingPool.getMostRecentValue();
+				System.out.println("Most recent data of " + operation.getKey()
+						+ " is " + value);
+				readingPool = null;
 			}
 			operation = transaction.popOperation();
 		}
@@ -80,18 +90,10 @@ public class Client extends Thread {
 
 	public void sendReadRequest(String transaction, String key, String data)
 			throws UnknownHostException, IOException {
-		readingPool = new ReadingPool(transaction, key);
 		// Send read request to all replicas
-		for (String replica : replicas) {
-			String[] hostnameAndPort = replica.split(":");
-			String hostname = hostnameAndPort[0];
-			int port = Integer.parseInt(hostnameAndPort[1]);
-			send(data, hostname, port);
+		for (ReplicaConnection replica : clusterManager.getReplicas()) {
+			send(data, replica.getHostname(), replica.getPort());
 		}
-		while (readingPool.getSize() < (replicas.size() + 1) / 2) {
-			// Waiting data from majority
-		}
-		readingPool = null;
 	}
 
 	public void send(String data, String hostname, int port)
