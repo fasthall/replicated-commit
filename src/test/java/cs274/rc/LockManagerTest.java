@@ -14,7 +14,8 @@ public class LockManagerTest extends TestCase {
 
 	public LockManagerTest(String testName) {
 		super(testName);
-		lockManager = LockManager.getInstance();
+		// lockManager = LockManager.getInstance();
+		lockManager = new LockManager();
 	}
 
 	public static Test suite() {

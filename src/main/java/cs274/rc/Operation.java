@@ -1,3 +1,7 @@
+/*
+ * @Author Wei-Tsung Lin
+ * @Date 02/27/2016
+ */
 package cs274.rc;
 
 public class Operation {
@@ -5,19 +9,29 @@ public class Operation {
 	public static final int READ = 0;
 	public static final int WRITE = 1;
 
+	private String transaction;
 	private int action;
 	private String key;
 	private String value;
 
-	public Operation(int action, String key) {
+	public Operation(String transaction, int action, String key) {
 		this.action = action;
 		this.key = key;
 	}
 
-	public Operation(int action, String key, String value) {
+	public Operation(String transaction, int action, String key, String value) {
+		this.transaction = transaction;
 		this.action = action;
 		this.key = key;
 		this.value = value;
+	}
+
+	public String getTransaction() {
+		return transaction;
+	}
+
+	public void setTransaction(String transaction) {
+		this.transaction = transaction;
 	}
 
 	public int getAction() {
@@ -47,9 +61,18 @@ public class Operation {
 	@Override
 	public String toString() {
 		if (action == READ) {
-			return "READ " + key;
+			// cmd[0] = "Read"
+			// cmd[1] = key
+			// cmd[2] = transaction
+			return "Read " + key + " " + transaction;
 		} else if (action == WRITE) {
-			return "WRITE " + key + " " + value;
+			// cmd[0] = "Write"
+			// cmd[1] = key
+			// cmd[2] = value
+			// cmd[3] = transaction
+			// cmd[4] = hostname
+			// cmd[5] = port
+			return "Write " + key + " " + value + " " + transaction;
 		} else {
 			return "Incorrect operation";
 		}

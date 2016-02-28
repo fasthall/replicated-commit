@@ -1,3 +1,7 @@
+/*
+ * @Author Wei-Tsung Lin
+ * @Date 02/27/2016
+ */
 package cs274.rc.connection;
 
 import java.util.ArrayList;

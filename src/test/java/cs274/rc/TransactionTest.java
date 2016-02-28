@@ -22,12 +22,12 @@ public class TransactionTest extends TestCase {
 	public void testTransaction() {
 		System.out.println("testTransaction");
 		// r[x] r[y] w[z] r[z] w[x]
-		Transaction transaction = new Transaction();
-		transaction.addOperation(new Operation(Operation.READ, "X"));
-		transaction.addOperation(new Operation(Operation.READ, "Y"));
-		transaction.addOperation(new Operation(Operation.WRITE, "Z"));
-		transaction.addOperation(new Operation(Operation.READ, "Z"));
-		transaction.addOperation(new Operation(Operation.WRITE, "X"));
+		Transaction transaction = new Transaction("T1");
+		transaction.addReadOperation("X");
+		transaction.addReadOperation("Y");
+		transaction.addWriteOperation("Z", "1");
+		transaction.addReadOperation("Z");
+		transaction.addWriteOperation("X", "2");
 
 		Operation operation;
 		operation = transaction.popOperation();
