@@ -61,30 +61,31 @@ public class Server extends Thread {
 		String[] cmd = operation.split(" ");
 		// cmd[0] = "Read" / "Write"
 		// cmd[1] = key
-		// cmd[2] = value (not used in read
+		// cmd[2] = value (not used in read)
 		// cmd[3] = transaction
 		// cmd[4] = hostname
 		// cmd[5] = port
 		if (cmd[0].equals("Read")) {
-			return handleRead(cmd[1], cmd[3], cmd[4], cmd[5]);
+			return handleRead(cmd[1], cmd[3], cmd[4], Integer.parseInt(cmd[5]));
 		} else if (cmd[0].equals("Write")) {
-			return handleWrite(cmd[1], cmd[2], cmd[3], cmd[4], cmd[5]);
+			return handleWrite(cmd[1], cmd[2], cmd[3], cmd[4],
+					Integer.parseInt(cmd[5]));
 		} else if (cmd[0].equals(Communication.PAXOS_REQUEST)) {
-			/*
-			 * TODO The coordinator sends 2PC prepare request to all cohorts
-			 * within the same DC, including the coordinator itself All cohorts
-			 * acquire locks and log the 2PC prepare operation The coordinator
-			 * waits for acknowledgments from all cohorts within the same DC
-			 * that they are prepared
-			 */
-			return false;
+			// cmd[0] = PaxosRequest
+			// cmd[1] = vote ID
+			// cmd[2] = writeBuffer
+			// cmd[3] = transaction
+			// cmd[4] = hostname
+			// cmd[5] = port
+			return handlePaxos(Long.parseLong(cmd[1]), cmd[2].split(","),
+					cmd[3], cmd[4], Integer.parseInt(cmd[5]));
 		} else {
 			return false;
 		}
 	}
 
 	private boolean handleRead(String key, String transaction, String hostname,
-			String port) throws NumberFormatException, UnknownHostException,
+			int port) throws NumberFormatException, UnknownHostException,
 			IOException {
 		// set the shared lock
 		if (lockManager.setShared(key, transaction)) {
@@ -93,9 +94,9 @@ public class Server extends Thread {
 			// TODO get data from DB and send it back
 			String value = "dataFromDB" + System.currentTimeMillis();
 			long version = System.currentTimeMillis();
-			String data = Communication.REPLY_READ + " " + name + " " + transaction + " "
-					+ key + " " + value + " " + version;
-			send(data, hostname, Integer.parseInt(port));
+			String data = Communication.REPLY_READ + " " + name + " "
+					+ transaction + " " + key + " " + value + " " + version;
+			send(data, hostname, port);
 			return true;
 		} else {
 			// can't acquire the lock
@@ -104,7 +105,41 @@ public class Server extends Thread {
 	}
 
 	private boolean handleWrite(String key, String value, String transaction,
-			String hostname, String port) {
+			String hostname, int port) {
+		return false;
+	}
+
+	private boolean handlePaxos(long voteID, String[] writeBuffer,
+			String transaction, String hostname, int port)
+			throws UnknownHostException, IOException {
+		/*
+		 * TODO The coordinator sends 2PC prepare request to all cohorts within
+		 * the same DC, including the coordinator itself All cohorts acquire
+		 * locks and log the 2PC prepare operation The coordinator waits for
+		 * acknowledgments from all cohorts within the same DC that they are
+		 * prepared
+		 */
+		// acquire all the exclusive locks
+		for (String writeOp : writeBuffer) {
+			String key = writeOp.split(":")[0];
+			String value = writeOp.split(":")[1];
+			boolean lockResult = lockManager.setExclusive(key, transaction);
+			if (lockResult) {
+				System.out.println(name + " sets lock on " + key + " for "
+						+ transaction);
+			} else {
+				System.out.println(name + " can't set lock on " + key + " for "
+						+ transaction);
+				// TODO reject
+				String data = Communication.PAXOS_REJECT + " " + voteID + " "
+						+ transaction;
+				send(data, hostname, port);
+				return false;
+			}
+		}
+		String data = Communication.PAXOS_ACCEPT + " " + voteID + " "
+				+ transaction;
+		send(data, hostname, port);
 		return false;
 	}
 

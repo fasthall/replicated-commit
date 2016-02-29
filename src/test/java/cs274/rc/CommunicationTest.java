@@ -46,7 +46,9 @@ public class CommunicationTest extends TestCase {
 				clusterManager);
 		client1.start();
 		Transaction t1 = new Transaction("T1");
+		t1.addWriteOperation("X", "v1");
 		t1.addReadOperation("X");
+		t1.addWriteOperation("Y", "v2");
 		client1.put(t1);
 
 		// test stopping server

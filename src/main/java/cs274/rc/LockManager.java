@@ -43,20 +43,20 @@ public class LockManager {
 	}
 
 	public synchronized boolean setShared(String key, String transaction) {
-		System.out.println(transaction + " is trying to set shared lock on "
-				+ key + "...");
+		// System.out.println(transaction + " is trying to set shared lock on "
+		// + key + "...");
 		if (exclusiveLock.containsKey(key)) {
-			System.out.println(exclusiveLock.get(key)
-					+ " is holding the exclusive lock.");
+			// System.out.println(exclusiveLock.get(key)
+			// + " is holding the exclusive lock.");
 			return false;
 		} else {
 			if (sharedLock.containsKey(key)) {
 				List<String> transactions = sharedLock.get(key);
 				if (transactions.contains(transaction)) {
-					System.out
-							.println(transaction
-									+ " has already owned shared lock on "
-									+ key + ".");
+					// System.out
+					// .println(transaction
+					// + " has already owned shared lock on "
+					// + key + ".");
 					return false;
 				}
 				sharedLock.get(key).add(transaction);
@@ -65,18 +65,19 @@ public class LockManager {
 				transactions.add(transaction);
 				sharedLock.put(key, transactions);
 			}
-			System.out.println(transaction
-					+ " successfully set shared lock on " + key + ".");
+			// System.out.println(transaction
+			// + " successfully set shared lock on " + key + ".");
 			return true;
 		}
 	}
 
 	public synchronized boolean setExclusive(String key, String transaction) {
-		System.out.println(transaction + " is trying to set exclusive lock on "
-				+ key + "...");
+		// System.out.println(transaction +
+		// " is trying to set exclusive lock on "
+		// + key + "...");
 		if (exclusiveLock.containsKey(key)) {
-			System.out.println(exclusiveLock.get(key)
-					+ " is holding the exclusive lock.");
+			// System.out.println(exclusiveLock.get(key)
+			// + " is holding the exclusive lock.");
 			return false;
 		} else if (sharedLock.containsKey(key)) {
 			List<String> transactions = sharedLock.get(key);
@@ -85,21 +86,21 @@ public class LockManager {
 				// Upgrade shared lock to exclusive lock
 				sharedLock.remove(key);
 				exclusiveLock.put(key, transaction);
-				System.out.println("Only " + transaction
-						+ " holds shared lock on " + key
-						+ ", upgrade it to exclusive lock.");
+				// System.out.println("Only " + transaction
+				// + " holds shared lock on " + key
+				// + ", upgrade it to exclusive lock.");
 				return true;
 			} else {
 				// Others hold shared lock
-				System.out
-						.println("Another transaction is holding the shared lock on "
-								+ key + ", cannot set the exclusive lock.");
+				// System.out
+				// .println("Another transaction is holding the shared lock on "
+				// + key + ", cannot set the exclusive lock.");
 				return false;
 			}
 		} else {
 			exclusiveLock.put(key, transaction);
-			System.out.println(transaction
-					+ " successfully set exclusive lock on " + key + ".");
+			// System.out.println(transaction
+			// + " successfully set exclusive lock on " + key + ".");
 			return true;
 		}
 	}
@@ -114,13 +115,13 @@ public class LockManager {
 				} else {
 					sharedLock.put(key, transactions);
 				}
-				System.out.println(transaction + " unlocks share lock on "
-						+ key + ".");
+				// System.out.println(transaction + " unlocks share lock on "
+				// + key + ".");
 				return true;
 			}
 		}
-		System.out.println(transaction + " doesn't own share lock on " + key
-				+ ".");
+		// System.out.println(transaction + " doesn't own share lock on " + key
+		// + ".");
 		return false;
 	}
 
@@ -128,12 +129,12 @@ public class LockManager {
 		if (exclusiveLock.containsKey(key)
 				&& exclusiveLock.get(key).equals(transaction)) {
 			exclusiveLock.remove(key);
-			System.out.println(transaction + " unlocks exclusive lock on "
-					+ key + ".");
+			// System.out.println(transaction + " unlocks exclusive lock on "
+			// + key + ".");
 			return true;
 		}
-		System.out.println(transaction + " doesn't own exclusive lock on "
-				+ key + ".");
+		// System.out.println(transaction + " doesn't own exclusive lock on "
+		// + key + ".");
 		return false;
 	}
 

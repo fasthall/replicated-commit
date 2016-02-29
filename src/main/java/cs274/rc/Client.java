@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
 import cs274.rc.connection.ClusterManager;
@@ -21,7 +22,7 @@ public class Client extends Thread {
 	private ClusterManager clusterManager;
 
 	private ReadingPool readingPool;
-	private List<Operation> writeBuffer;
+	private PaxosPool paxosPool;
 
 	public Client(String name, String hostname, int port,
 			ClusterManager clusterManager) {
@@ -30,7 +31,7 @@ public class Client extends Thread {
 		this.port = port;
 		this.clusterManager = clusterManager;
 		readingPool = null;
-		writeBuffer = null;
+		paxosPool = null;
 	}
 
 	@Override
@@ -52,6 +53,18 @@ public class Client extends Thread {
 						readingPool.addDataFromReplica(cmd[1], cmd[4],
 								Long.parseLong(cmd[5]));
 					}
+				} else if (cmd[0].equals(Communication.PAXOS_ACCEPT)) {
+					if (paxosPool != null
+							&& Long.parseLong(cmd[1]) == paxosPool.getVoteID()
+							&& cmd[2].equals(paxosPool.getTransction())) {
+						paxosPool.addAccept();
+					}
+				} else if (cmd[0].equals(Communication.PAXOS_REJECT)) {
+					if (paxosPool != null
+							&& Long.parseLong(cmd[1]) == paxosPool.getVoteID()
+							&& cmd[2].equals(paxosPool.getTransction())) {
+						paxosPool.addReject();
+					}
 				}
 				System.out.println("Client " + name + " received: " + received);
 			}
@@ -68,13 +81,14 @@ public class Client extends Thread {
 
 	public void put(Transaction transaction) throws UnknownHostException,
 			IOException {
+		List<Operation> writeBuffer = new ArrayList<Operation>();
 		while (true) {
 			Operation operation = transaction.popOperation();
 			if (operation == null) {
 				// transaction terminates, start Paxos
 				System.out.println("transaction terminates, start Paxos");
 				// TODO appoint the coordinators at each DC
-				sendPaxosRequest();
+				sendPaxosRequest(transaction, writeBuffer);
 				break;
 			} else if (operation.getAction() == Operation.READ) {
 				sendReadRequest(transaction, operation);
@@ -103,17 +117,36 @@ public class Client extends Thread {
 		readingPool = null;
 	}
 
-	public synchronized void sendPaxosRequest() throws UnknownHostException,
+	public synchronized void sendPaxosRequest(Transaction transaction,
+			List<Operation> writeBuffer) throws UnknownHostException,
 			IOException {
 		// cmd[0] = PaxosRequest
 		// cmd[1] = vote ID
-		// cmd[2] = hostname
-		// cmd[3] = port
-		String data = Communication.PAXOS_REQUEST + " "
-				+ System.currentTimeMillis() + " " + hostname + " " + port;
+		// cmd[2] = writeBuffer
+		// cmd[3] = transaction
+		// cmd[4] = hostname
+		// cmd[5] = port
+		long voteID = System.currentTimeMillis();
+		paxosPool = new PaxosPool(transaction.getName(), voteID);
+		String data = Communication.PAXOS_REQUEST + " " + voteID + " "
+				+ serializeBuffer(writeBuffer) + " " + transaction.getName()
+				+ " " + hostname + " " + port;
 		// Send Paxos accept request to all the coordinators
 		for (ReplicaConnection replica : clusterManager.getReplicas()) {
 			send(data, replica.getHostname(), replica.getPort());
+		}
+		while (paxosPool.getAcceptCount() + paxosPool.getRejectCount() < clusterManager
+				.getReplicaNumber()
+				&& paxosPool.getAcceptCount() <= clusterManager
+						.getReplicaNumber() / 2) {
+			// Wait for majority
+		}
+		if (paxosPool.getAcceptCount() > clusterManager.getReplicaNumber() / 2) {
+			// TODO commit
+			System.out.println("Majority accepts, commit.");
+		} else {
+			// TODO abort
+			System.out.println("Not enough accepts, abort.");
 		}
 	}
 
@@ -126,4 +159,14 @@ public class Client extends Thread {
 		clientSocket.close();
 	}
 
+	public String serializeBuffer(List<Operation> writeBuffer) {
+		if (writeBuffer.isEmpty())
+			return null;
+		String serializedBuffer = "";
+		for (Operation operation : writeBuffer) {
+			serializedBuffer += operation.getKey() + ":" + operation.getValue()
+					+ ",";
+		}
+		return serializedBuffer;
+	}
 }
