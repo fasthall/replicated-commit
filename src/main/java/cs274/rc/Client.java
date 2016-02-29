@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.List;
 
 import cs274.rc.connection.ClusterManager;
@@ -22,6 +21,7 @@ public class Client extends Thread {
 	private ClusterManager clusterManager;
 
 	private ReadingPool readingPool;
+	private List<Operation> writeBuffer;
 
 	public Client(String name, String hostname, int port,
 			ClusterManager clusterManager) {
@@ -30,6 +30,7 @@ public class Client extends Thread {
 		this.port = port;
 		this.clusterManager = clusterManager;
 		readingPool = null;
+		writeBuffer = null;
 	}
 
 	@Override
@@ -44,7 +45,7 @@ public class Client extends Thread {
 						new InputStreamReader(connectionSocket.getInputStream()));
 				String received = bufferedReader.readLine();
 				String[] cmd = received.split(" ");
-				if (cmd[0].equals(Server.REPLY_READ)) {
+				if (cmd[0].equals(Communication.REPLY_READ)) {
 					if (readingPool != null
 							&& cmd[2].equals(readingPool.getTransaction())
 							&& cmd[3].equals(readingPool.getKey())) {
@@ -67,30 +68,50 @@ public class Client extends Thread {
 
 	public void put(Transaction transaction) throws UnknownHostException,
 			IOException {
-		Operation operation = transaction.popOperation();
-		while (operation != null) {
-			if (operation.getAction() == Operation.READ) {
-				readingPool = new ReadingPool(transaction.getName(),
-						operation.getKey());
-				sendReadRequest(transaction.getName(), operation.getKey(),
-						operation.toString() + " " + transaction.getName()
-								+ " " + hostname + " " + port);
-				while (readingPool.getSize() < clusterManager
-						.getMajorityNumber()) {
-					// Waiting data from majority
-				}
-				String value = readingPool.getMostRecentValue();
-				System.out.println("Most recent data of " + operation.getKey()
-						+ " is " + value);
-				readingPool = null;
+		while (true) {
+			Operation operation = transaction.popOperation();
+			if (operation == null) {
+				// transaction terminates, start Paxos
+				System.out.println("transaction terminates, start Paxos");
+				// TODO appoint the coordinators at each DC
+				sendPaxosRequest();
+				break;
+			} else if (operation.getAction() == Operation.READ) {
+				sendReadRequest(transaction, operation);
+			} else if (operation.getAction() == Operation.WRITE) {
+				// buffer write
+				writeBuffer.add(operation);
 			}
-			operation = transaction.popOperation();
 		}
 	}
 
-	public void sendReadRequest(String transaction, String key, String data)
-			throws UnknownHostException, IOException {
+	public synchronized void sendReadRequest(Transaction transaction,
+			Operation operation) throws UnknownHostException, IOException {
+		readingPool = new ReadingPool(transaction.getName(), operation.getKey());
+		String data = operation.toString() + " " + transaction.getName() + " "
+				+ hostname + " " + port;
 		// Send read request to all replicas
+		for (ReplicaConnection replica : clusterManager.getReplicas()) {
+			send(data, replica.getHostname(), replica.getPort());
+		}
+		while (readingPool.getSize() <= clusterManager.getReplicaNumber() / 2) {
+			// Waiting data from majority
+		}
+		String value = readingPool.getMostRecentValue();
+		System.out.println("Most recent data of " + operation.getKey() + " is "
+				+ value);
+		readingPool = null;
+	}
+
+	public synchronized void sendPaxosRequest() throws UnknownHostException,
+			IOException {
+		// cmd[0] = PaxosRequest
+		// cmd[1] = vote ID
+		// cmd[2] = hostname
+		// cmd[3] = port
+		String data = Communication.PAXOS_REQUEST + " "
+				+ System.currentTimeMillis() + " " + hostname + " " + port;
+		// Send Paxos accept request to all the coordinators
 		for (ReplicaConnection replica : clusterManager.getReplicas()) {
 			send(data, replica.getHostname(), replica.getPort());
 		}

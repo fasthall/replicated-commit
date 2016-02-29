@@ -27,34 +27,20 @@ public class CommunicationTest extends TestCase {
 		return new TestSuite(CommunicationTest.class);
 	}
 
-	public void testClientToServer() throws UnknownHostException, IOException,
-			InterruptedException {
-		// System.out.println("testClientToServer");
-		// Server server = new Server("S1", serverPort1);
-		// server.start();
-		// assertTrue(server.isAlive());
-		// Client client = new Client("C1", clientPort1);
-		// client.send("TEST DATA", "localhost", serverPort1);
-		// assertTrue(server.isAlive());
-		// client.send("exit", "localhost", serverPort1);
-		// Thread.sleep(50);
-		// assertFalse(server.isAlive());
-	}
-
 	public void testReadRequest() throws UnknownHostException, IOException,
 			InterruptedException {
 		System.out.println("testReadRequest");
 		Server server1 = new Server("S1", serverPort1);
 		Server server2 = new Server("S2", serverPort2);
-		Server server3 = new Server("S3", serverPort3);
+		// Server server3 = new Server("S3", serverPort3);
 		server1.start();
 		server2.start();
-		server3.start();
+		// server3.start();
 
 		ClusterManager clusterManager = new ClusterManager();
 		clusterManager.addReplica("localhost", serverPort1);
 		clusterManager.addReplica("localhost", serverPort2);
-		clusterManager.addReplica("localhost", serverPort3);
+		// clusterManager.addReplica("localhost", serverPort3);
 
 		Client client1 = new Client("C1", "localhost", clientPort1,
 				clusterManager);
@@ -62,7 +48,6 @@ public class CommunicationTest extends TestCase {
 		Transaction t1 = new Transaction("T1");
 		t1.addReadOperation("X");
 		client1.put(t1);
-		// client.send("TEST DATA", "localhost", serverPort1);
 
 		// test stopping server
 		assertTrue(server1.isAlive());

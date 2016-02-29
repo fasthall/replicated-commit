@@ -23,8 +23,8 @@ public class ClusterManager {
 		return replicas;
 	}
 
-	public int getMajorityNumber() {
-		return (replicas.size() + 1) / 2;
+	public int getReplicaNumber() {
+		return replicas.size();
 	}
 
 }

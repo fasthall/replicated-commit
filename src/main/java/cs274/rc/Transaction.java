@@ -11,18 +11,24 @@ public class Transaction {
 
 	private String name;
 	private List<Operation> list;
+	private List<String> readSet;
+	private List<String> writeSet;
 
 	public Transaction(String name) {
 		this.name = name;
 		list = new ArrayList<Operation>();
+		readSet = new ArrayList<String>();
+		writeSet = new ArrayList<String>();
 	}
 
 	public void addReadOperation(String key) {
 		list.add(new Operation(name, Operation.READ, key));
+		readSet.add(key);
 	}
 
 	public void addWriteOperation(String key, String value) {
 		list.add(new Operation(name, Operation.WRITE, key, value));
+		writeSet.add(key);
 	}
 
 	public void addOperation(Operation operation) {
@@ -42,8 +48,12 @@ public class Transaction {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public List<String> getReadSet() {
+		return readSet;
+	}
+
+	public List<String> getWriteSet() {
+		return writeSet;
 	}
 
 }

@@ -14,8 +14,6 @@ import java.net.UnknownHostException;
 
 public class Server extends Thread {
 
-	public static final String REPLY_READ = "ReplyRead";
-
 	private String name;
 	private int port;
 	private ServerSocket serverSocket;
@@ -71,6 +69,15 @@ public class Server extends Thread {
 			return handleRead(cmd[1], cmd[3], cmd[4], cmd[5]);
 		} else if (cmd[0].equals("Write")) {
 			return handleWrite(cmd[1], cmd[2], cmd[3], cmd[4], cmd[5]);
+		} else if (cmd[0].equals(Communication.PAXOS_REQUEST)) {
+			/*
+			 * TODO The coordinator sends 2PC prepare request to all cohorts
+			 * within the same DC, including the coordinator itself All cohorts
+			 * acquire locks and log the 2PC prepare operation The coordinator
+			 * waits for acknowledgments from all cohorts within the same DC
+			 * that they are prepared
+			 */
+			return false;
 		} else {
 			return false;
 		}
@@ -86,7 +93,7 @@ public class Server extends Thread {
 			// TODO get data from DB and send it back
 			String value = "dataFromDB" + System.currentTimeMillis();
 			long version = System.currentTimeMillis();
-			String data = REPLY_READ + " " + name + " " + transaction + " "
+			String data = Communication.REPLY_READ + " " + name + " " + transaction + " "
 					+ key + " " + value + " " + version;
 			send(data, hostname, Integer.parseInt(port));
 			return true;
@@ -106,7 +113,7 @@ public class Server extends Thread {
 		Socket clientSocket = new Socket(hostname, port);
 		DataOutputStream outToServer = new DataOutputStream(
 				clientSocket.getOutputStream());
-		outToServer.writeBytes(data);
+		outToServer.writeBytes(data + '\n');
 		clientSocket.close();
 		System.out.println("Server " + name + " sent: " + data);
 	}
