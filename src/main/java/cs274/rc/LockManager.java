@@ -137,5 +137,14 @@ public class LockManager {
 		// + key + ".");
 		return false;
 	}
+	
+	public synchronized boolean testExclusive(List<String> keys) {
+		for (String key : keys) {
+			if (exclusiveLock.containsKey(key)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 }

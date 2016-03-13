@@ -1,13 +1,13 @@
 package cs274.rc;
 
-public class PaxosPool {
+public class TPCPool {
 
 	private String transaction;
 	private long voteID;
 	private int acceptCount;
 	private int rejectCount;
 
-	public PaxosPool(String transaction, long voteID) {
+	public TPCPool(String transaction, long voteID) {
 		this.transaction = transaction;
 		this.voteID = voteID;
 		acceptCount = 0;

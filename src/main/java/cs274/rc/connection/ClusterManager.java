@@ -9,22 +9,31 @@ import java.util.List;
 
 public class ClusterManager {
 
-	private List<ReplicaConnection> replicas;
+	private List<Node> replicas;
+	private int coordinatorNum;
 
 	public ClusterManager() {
-		replicas = new ArrayList<ReplicaConnection>();
+		replicas = new ArrayList<Node>();
+		coordinatorNum = 0;
 	}
 
-	public void addReplica(String hostname, int port) {
-		replicas.add(new ReplicaConnection(hostname, port));
+	public void addReplica(String hostname, int port, boolean coordinator) {
+		replicas.add(new Node(hostname, port, coordinator));
+		if (coordinator) {
+			++coordinatorNum;
+		}
 	}
 
-	public List<ReplicaConnection> getReplicas() {
+	public List<Node> getReplicas() {
 		return replicas;
 	}
 
 	public int getReplicaNumber() {
 		return replicas.size();
+	}
+
+	public int getCoordinatorNumber() {
+		return coordinatorNum;
 	}
 
 }
