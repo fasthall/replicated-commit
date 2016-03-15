@@ -43,7 +43,7 @@ public class Server extends Thread {
 		dcManager = new DataCenterManager();
 		otherCoordinators = new ArrayList<Node>();
 		datastore = new AbstractDatastore();
-		abstractLog = new AbstractLog();
+		abstractLog = new AbstractLog(datastore);
 		dcManager.addShard(new Node(hostname, port, coordinator));
 		tpcPool = null;
 		paxosPool = null;
@@ -91,7 +91,8 @@ public class Server extends Thread {
 		}
 	}
 
-	private void handlerOperation(String operation) throws NumberFormatException, UnknownHostException, IOException {
+	private void handlerOperation(String operation)
+			throws NumberFormatException, UnknownHostException, IOException {
 		String[] cmd = operation.split(" ");
 		// cmd[0] = "Read" / "Write"
 		// cmd[1] = key
@@ -108,7 +109,8 @@ public class Server extends Thread {
 			// cmd[3] = transaction
 			// cmd[4] = hostname
 			// cmd[5] = port
-			handlePaxosRequest(Long.parseLong(cmd[1]), cmd[2], cmd[3], cmd[4], Integer.parseInt(cmd[5]));
+			handlePaxosRequest(Long.parseLong(cmd[1]), cmd[2], cmd[3], cmd[4],
+					Integer.parseInt(cmd[5]));
 		} else if (cmd[0].equals(Communication.TPC_PREPARE)) {
 			// cmd[0] = 2PCPrepare
 			// cmd[1] = vote ID
@@ -116,48 +118,55 @@ public class Server extends Thread {
 			// cmd[3] = transaction
 			// cmd[4] = hostname
 			// cmd[5] = port
-			handle2PCPrepare(Long.parseLong(cmd[1]), cmd[2].split(","), cmd[3], cmd[4], Integer.parseInt(cmd[5]));
+			handle2PCPrepare(Long.parseLong(cmd[1]), cmd[2].split(","), cmd[3],
+					cmd[4], Integer.parseInt(cmd[5]));
 		} else if (cmd[0].equals(Communication.TPC_ACCEPT)) {
-			if (tpcPool != null && Long.parseLong(cmd[1]) == tpcPool.getVoteID()
+			if (tpcPool != null
+					&& Long.parseLong(cmd[1]) == tpcPool.getVoteID()
 					&& cmd[3].equals(tpcPool.getTransction())) {
 				tpcPool.addAccept();
 			}
 		} else if (cmd[0].equals(Communication.TPC_REJECT)) {
-			if (tpcPool != null && Long.parseLong(cmd[1]) == tpcPool.getVoteID()
+			if (tpcPool != null
+					&& Long.parseLong(cmd[1]) == tpcPool.getVoteID()
 					&& cmd[3].equals(tpcPool.getTransction())) {
 				tpcPool.addReject();
 			}
 		} else if (cmd[0].equals(Communication.PAXOS_ACCEPT)) {
-			if (paxosPool != null && Long.parseLong(cmd[1]) == paxosPool.getVoteID()
+			if (paxosPool != null
+					&& Long.parseLong(cmd[1]) == paxosPool.getVoteID()
 					&& cmd[2].equals(paxosPool.getTransction())) {
 				paxosPool.addAccept();
 			}
 		} else if (cmd[0].equals(Communication.PAXOS_REJECT)) {
-			if (paxosPool != null && Long.parseLong(cmd[1]) == paxosPool.getVoteID()
+			if (paxosPool != null
+					&& Long.parseLong(cmd[1]) == paxosPool.getVoteID()
 					&& cmd[2].equals(paxosPool.getTransction())) {
 				paxosPool.addReject();
 			}
 		}
 	}
 
-	private void handleRead(String key, String transaction, String hostname, int port)
-			throws NumberFormatException, UnknownHostException, IOException {
+	private void handleRead(String key, String transaction, String hostname,
+			int port) throws NumberFormatException, UnknownHostException,
+			IOException {
 		// set the shared lock
 		if (lockManager.setShared(key, transaction)) {
 			// successfully set, return the latest version
 			DatastoreEntry entry = datastore.get(key);
 			String value = (entry == null ? "NULL" : entry.getValue());
 			long version = (entry == null ? 0 : entry.getVersion());
-			String data = Communication.READ_REPLY + " " + name + " " + transaction + " " + key + " " + value + " "
-					+ version;
+			String data = Communication.READ_REPLY + " " + name + " "
+					+ transaction + " " + key + " " + value + " " + version;
 			send(data, hostname, port);
 		} else {
 			// can't acquire the lock
 		}
 	}
 
-	private void handlePaxosRequest(long voteID, String writeBuffer, String transaction, String senderHostname,
-			int senderPort) throws UnknownHostException, IOException {
+	private void handlePaxosRequest(long voteID, String writeBuffer,
+			String transaction, String senderHostname, int senderPort)
+			throws UnknownHostException, IOException {
 		// send 2PC prepare to cohorts and self
 		tpcPool = new TPCPool(transaction, voteID);
 		// wait until all reply
@@ -169,14 +178,16 @@ public class Server extends Thread {
 			// cmd[4] = hostname
 			// cmd[5] = port
 			if (!node.isCoordinator()) {
-				String data = Communication.TPC_PREPARE + " " + voteID + " " + writeBuffer + " " + transaction + " "
-						+ hostname + " " + port;
+				String data = Communication.TPC_PREPARE + " " + voteID + " "
+						+ writeBuffer + " " + transaction + " " + hostname
+						+ " " + port;
 				send(data, node.getHostname(), node.getPort());
 			}
 			handle2PCPrepareSelf(voteID, writeBuffer.split(","), transaction);
 		}
 		long startTime = System.currentTimeMillis();
-		while (tpcPool.getAcceptCount() + tpcPool.getRejectCount() < dcManager.getShardsNumber()) {
+		while (tpcPool.getAcceptCount() + tpcPool.getRejectCount() < dcManager
+				.getShardsNumber()) {
 			// Wait for majority
 			if (System.currentTimeMillis() > startTime + 500) {
 				// timeout
@@ -187,10 +198,12 @@ public class Server extends Thread {
 		String data;
 		if (tpcPool.getRejectCount() == 0) {
 			tpcResult = true;
-			data = Communication.PAXOS_ACCEPT + " " + voteID + " " + transaction;
+			data = Communication.PAXOS_ACCEPT + " " + voteID + " "
+					+ transaction;
 		} else {
 			tpcResult = false;
-			data = Communication.PAXOS_REJECT + " " + voteID + " " + transaction;
+			data = Communication.PAXOS_REJECT + " " + voteID + " "
+					+ transaction;
 		}
 		send(data, senderHostname, senderPort);
 		tpcPool = null;
@@ -205,7 +218,8 @@ public class Server extends Thread {
 			send(data, node.getHostname(), node.getPort());
 		}
 		startTime = System.currentTimeMillis();
-		while (paxosPool.getAcceptCount() + paxosPool.getRejectCount() < otherCoordinators.size() + 1
+		while (paxosPool.getAcceptCount() + paxosPool.getRejectCount() < otherCoordinators
+				.size() + 1
 				|| paxosPool.getAcceptCount() <= (otherCoordinators.size() + 1) / 2) {
 			// Wait for majority
 			if (System.currentTimeMillis() > startTime + 500) {
@@ -213,7 +227,8 @@ public class Server extends Thread {
 				break;
 			}
 		}
-		System.out.println("Server " + name + " received from majority, start 2PC commit.");
+		System.out.println("Server " + name
+				+ " received from majority, start 2PC commit.");
 		paxosPool = null;
 
 		/*
@@ -225,14 +240,16 @@ public class Server extends Thread {
 			// cmd[1] = vote ID
 			// cmd[2] = transaction
 			if (!node.isCoordinator()) {
-				send(Communication.TPC_COMMIT + " " + voteID + " " + writeBuffer, node.getHostname(), node.getPort());
+				send(Communication.TPC_COMMIT + " " + voteID + " "
+						+ writeBuffer, node.getHostname(), node.getPort());
 			}
 			handle2PCCommit(voteID, transaction);
 		}
 	}
 
-	private void handle2PCPrepare(long voteID, String[] writeBuffer, String transaction, String senderHostname,
-			int senderPort) throws UnknownHostException, IOException {
+	private void handle2PCPrepare(long voteID, String[] writeBuffer,
+			String transaction, String senderHostname, int senderPort)
+			throws UnknownHostException, IOException {
 		// acquire all the exclusive locks
 		List<String> keys = new ArrayList<String>();
 		for (String writeOp : writeBuffer) {
@@ -248,15 +265,18 @@ public class Server extends Thread {
 			}
 			abstractLog.put(logEntry);
 			System.out.println("Server " + name + " locks: log 2PC prepare.");
-			String data = Communication.TPC_ACCEPT + " " + voteID + " " + transaction;
+			String data = Communication.TPC_ACCEPT + " " + voteID + " "
+					+ transaction;
 			send(data, senderHostname, senderPort);
 		} else {
-			String data = Communication.TPC_REJECT + " " + voteID + " " + transaction;
+			String data = Communication.TPC_REJECT + " " + voteID + " "
+					+ transaction;
 			send(data, senderHostname, senderPort);
 		}
 	}
 
-	private void handle2PCPrepareSelf(long voteID, String[] writeBuffer, String transaction) {
+	private void handle2PCPrepareSelf(long voteID, String[] writeBuffer,
+			String transaction) {
 		// acquire all the exclusive locks
 		List<String> keys = new ArrayList<String>();
 		for (String writeOp : writeBuffer) {
@@ -272,28 +292,30 @@ public class Server extends Thread {
 			}
 			abstractLog.put(logEntry);
 			System.out.println("Server " + name + " locks: log 2PC prepare.");
-			if (tpcPool != null && voteID == tpcPool.getVoteID() && transaction.equals(tpcPool.getTransction())) {
+			if (tpcPool != null && voteID == tpcPool.getVoteID()
+					&& transaction.equals(tpcPool.getTransction())) {
 				tpcPool.addAccept();
 			}
 		} else {
-			if (tpcPool != null && voteID == tpcPool.getVoteID() && transaction.equals(tpcPool.getTransction())) {
+			if (tpcPool != null && voteID == tpcPool.getVoteID()
+					&& transaction.equals(tpcPool.getTransction())) {
 				tpcPool.addReject();
 			}
 		}
 	}
 
 	private void handle2PCCommit(long voteID, String transaction) {
-		LogEntry entry = abstractLog.commit(transaction);
-		for (String[] pair : entry.getWrite()) {
-			DatastoreEntry dsEntry = new DatastoreEntry(pair[1], voteID);
-			datastore.put(pair[0], dsEntry);
-		}
-		System.out.println("Server " + name + " committed locally.");
+		abstractLog.commit(voteID, transaction);
+		lockManager.unlockAllByTransaction(transaction);
+		System.out.println("Server " + name
+				+ " committed locally and released the locks.");
 	}
 
-	private void send(String data, String hostname, int port) throws UnknownHostException, IOException {
+	private void send(String data, String hostname, int port)
+			throws UnknownHostException, IOException {
 		Socket clientSocket = new Socket(hostname, port);
-		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+		DataOutputStream outToServer = new DataOutputStream(
+				clientSocket.getOutputStream());
 		outToServer.writeBytes(data + '\n');
 		clientSocket.close();
 		System.out.println("Server " + name + " sent to " + port + ": " + data);

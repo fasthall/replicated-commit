@@ -5,6 +5,7 @@
 package cs274.rc;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -136,6 +137,11 @@ public class LockManager {
 		// System.out.println(transaction + " doesn't own exclusive lock on "
 		// + key + ".");
 		return false;
+	}
+	
+	public synchronized void unlockAllByTransaction(String transaction) {
+		sharedLock.values().removeAll(Collections.singleton(transaction));
+		exclusiveLock.values().removeAll(Collections.singleton(transaction));
 	}
 	
 	public synchronized boolean testExclusive(List<String> keys) {

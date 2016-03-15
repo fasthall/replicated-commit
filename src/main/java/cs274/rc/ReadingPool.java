@@ -8,14 +8,17 @@ public class ReadingPool {
 	private String transaction;
 	private String key;
 	private List<ReadingData> list; // value and version
+	private int rejected;
 
 	public ReadingPool(String transaction, String key) {
 		this.setTransaction(transaction);
 		this.setKey(key);
 		list = new ArrayList<ReadingData>();
+		rejected = 0;
 	}
 
-	public void addDataFromReplica(String replica, String value, long version) {
+	public synchronized void addDataFromReplica(String replica, String value,
+			long version) {
 		for (ReadingData data : list) {
 			if (data.replica.equals(replica)) {
 				return;
@@ -24,7 +27,11 @@ public class ReadingPool {
 		list.add(new ReadingData(replica, value, version));
 	}
 
-	public String getMostRecentValue() {
+	public synchronized void addReject() {
+		++rejected;
+	}
+
+	public synchronized String getMostRecentValue() {
 		String value = null;
 		long version = 0;
 		for (ReadingData data : list) {
@@ -36,8 +43,12 @@ public class ReadingPool {
 		return value;
 	}
 
-	public int getSize() {
+	public synchronized int getSize() {
 		return list.size();
+	}
+
+	public synchronized int getReject() {
+		return rejected;
 	}
 
 	public String getTransaction() {

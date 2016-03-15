@@ -14,19 +14,19 @@ public class TPCPool {
 		rejectCount = 0;
 	}
 
-	public void addAccept() {
+	public synchronized void addAccept() {
 		++acceptCount;
 	}
 
-	public void addReject() {
+	public synchronized void addReject() {
 		++rejectCount;
 	}
 
-	public int getAcceptCount() {
+	public synchronized int getAcceptCount() {
 		return acceptCount;
 	}
 
-	public int getRejectCount() {
+	public synchronized int getRejectCount() {
 		return rejectCount;
 	}
 

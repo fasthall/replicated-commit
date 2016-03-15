@@ -46,12 +46,14 @@ public class CommunicationTest extends TestCase {
 
 		Client client1 = new Client("C1", "localhost", clientPort1, clusterManager);
 		client1.start();
-		Thread.sleep(100);
+		Thread.sleep(50);
 		Transaction t1 = new Transaction("T1");
 		t1.addWriteOperation("X", "v1");
 		t1.addWriteOperation("Y", "v2");
 		client1.put(t1);
-
+//Thread.sleep(100);
+System.out.println("\n\n\n");
+//Thread.sleep(100);
 		Transaction t2 = new Transaction("T2");
 		t2.addReadOperation("X");
 		t2.addReadOperation("Y");
@@ -59,8 +61,8 @@ public class CommunicationTest extends TestCase {
 
 		// test stopping server
 		assertTrue(server1.isAlive());
-		Thread.sleep(50);
-		client1.send("exit", "localhost", serverPort1);
+//		Thread.sleep(50);
+//		client1.send("exit", "localhost", serverPort1);
 		// Thread.sleep(50);
 		// assertFalse(server1.isAlive());
 	}
