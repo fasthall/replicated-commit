@@ -64,7 +64,7 @@ public class Operation {
 			// cmd[0] = "Read"
 			// cmd[1] = key
 			// cmd[2] = transaction
-			return "Read " + key + " " + transaction;
+			return Communication.OPERATION_READ + " " + key + " " + transaction;
 		} else if (action == WRITE) {
 			// cmd[0] = "Write"
 			// cmd[1] = key
@@ -72,7 +72,8 @@ public class Operation {
 			// cmd[3] = transaction
 			// cmd[4] = hostname
 			// cmd[5] = port
-			return "Write " + key + " " + value + " " + transaction;
+			return Communication.OPERATION_WRITE + " " + key + " " + value
+					+ " " + transaction;
 		} else {
 			return "Incorrect operation";
 		}

@@ -28,7 +28,8 @@ public class CommunicationTest extends TestCase {
 		return new TestSuite(CommunicationTest.class);
 	}
 
-	public void testReadRequest() throws UnknownHostException, IOException, InterruptedException {
+	public void testReadRequest() throws UnknownHostException, IOException,
+			InterruptedException {
 		System.out.println("testReadRequest");
 		Server server1 = new Server("S1", "localhost", serverPort1, true);
 		Server server2 = new Server("S2", "localhost", serverPort2, true);
@@ -44,25 +45,41 @@ public class CommunicationTest extends TestCase {
 		clusterManager.addReplica("localhost", serverPort2, true);
 		// clusterManager.addReplica("localhost", serverPort3);
 
-		Client client1 = new Client("C1", "localhost", clientPort1, clusterManager);
+		Client client1 = new Client("C1", "localhost", clientPort1,
+				clusterManager);
 		client1.start();
 		Thread.sleep(50);
-		Transaction t1 = new Transaction("T1");
-		t1.addWriteOperation("X", "v1");
-		t1.addWriteOperation("Y", "v2");
-		client1.put(t1);
-//Thread.sleep(100);
-System.out.println("\n\n\n");
-//Thread.sleep(100);
-		Transaction t2 = new Transaction("T2");
-		t2.addReadOperation("X");
-		t2.addReadOperation("Y");
-		client1.put(t2);
+		for (int i = 0; i < 100; ++i) {
+			 Transaction t1 = new Transaction("T1");
+			 t1.addWriteOperation("X", "v1");
+			 t1.addWriteOperation("Y", "v2");
+			 client1.put(t1);
+
+			Transaction t2 = new Transaction("T2");
+			t2.addReadOperation("X");
+			t2.addReadOperation("Y");
+			client1.put(t2);
+			
+			 Transaction t3 = new Transaction("T3");
+			 t3.addWriteOperation("X", "v3");
+			 t3.addReadOperation("X");
+			 t3.addWriteOperation("Y", "v3");
+			 t3.addReadOperation("Y");
+			 client1.put(t3);
+			
+			 Transaction t4 = new Transaction("T4");
+			 t4.addWriteOperation("X", "v3");
+			 t4.addReadOperation("X");
+			 client1.put(t4);
+		}
+		System.out.println("errtimeout " + App.errtimeout);
+		System.out.println("errreject " + App.errreject);
+		System.out.println(App.err4Str);
 
 		// test stopping server
 		assertTrue(server1.isAlive());
-//		Thread.sleep(50);
-//		client1.send("exit", "localhost", serverPort1);
+		// Thread.sleep(50);
+		// client1.send("exit", "localhost", serverPort1);
 		// Thread.sleep(50);
 		// assertFalse(server1.isAlive());
 	}

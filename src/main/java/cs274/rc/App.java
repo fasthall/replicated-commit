@@ -7,6 +7,10 @@ package cs274.rc;
 import cs274.rc.connection.ClusterManager;
 
 public class App {
+	
+	public static int errtimeout = 0;
+	public static int errreject = 0;
+	public static String err4Str = "";
 
 	public static void main(String[] args) {
 		// Start data centers

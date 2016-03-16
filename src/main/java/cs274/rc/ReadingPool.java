@@ -11,8 +11,8 @@ public class ReadingPool {
 	private int rejected;
 
 	public ReadingPool(String transaction, String key) {
-		this.setTransaction(transaction);
-		this.setKey(key);
+		this.transaction = transaction;
+		this.key = key;
 		list = new ArrayList<ReadingData>();
 		rejected = 0;
 	}

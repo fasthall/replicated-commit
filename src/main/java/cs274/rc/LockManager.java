@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 public class LockManager {
 
@@ -138,12 +139,22 @@ public class LockManager {
 		// + key + ".");
 		return false;
 	}
-	
-	public synchronized void unlockAllByTransaction(String transaction) {
-		sharedLock.values().removeAll(Collections.singleton(transaction));
+
+	public synchronized void unlockAllSharedByTransaction(String transaction) {
+		for (Entry<String, List<String>> entry : sharedLock.entrySet()) {
+			String key = entry.getKey();
+			List<String> value = entry.getValue();
+			if (value.contains(transaction)) {
+				value.remove(transaction);
+				sharedLock.replace(key, value);
+			}
+		}
+	}
+
+	public synchronized void unlockAllExclusiveByTransaction(String transaction) {
 		exclusiveLock.values().removeAll(Collections.singleton(transaction));
 	}
-	
+
 	public synchronized boolean testExclusive(List<String> keys) {
 		for (String key : keys) {
 			if (exclusiveLock.containsKey(key)) {

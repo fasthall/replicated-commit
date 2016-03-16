@@ -2,6 +2,8 @@ package cs274.rc;
 
 public class Communication {
 
+	public static final String OPERATION_READ = "Read";
+	public static final String OPERATION_WRITE = "Write";
 	public static final String READ_REPLY = "ReadReply";
 	public static final String READ_REJECT = "ReadReject";
 	public static final String PAXOS_REQUEST = "PaxosRequest";
