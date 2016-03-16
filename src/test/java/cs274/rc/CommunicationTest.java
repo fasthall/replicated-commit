@@ -52,28 +52,16 @@ public class CommunicationTest extends TestCase {
 		for (int i = 0; i < 100; ++i) {
 			 Transaction t1 = new Transaction("T1");
 			 t1.addWriteOperation("X", "v1");
-			 t1.addWriteOperation("Y", "v2");
+			 t1.addReadOperation("X");
 			 client1.put(t1);
-
-			Transaction t2 = new Transaction("T2");
-			t2.addReadOperation("X");
-			t2.addReadOperation("Y");
-			client1.put(t2);
-			
-			 Transaction t3 = new Transaction("T3");
-			 t3.addWriteOperation("X", "v3");
-			 t3.addReadOperation("X");
-			 t3.addWriteOperation("Y", "v3");
-			 t3.addReadOperation("Y");
-			 client1.put(t3);
-			
-			 Transaction t4 = new Transaction("T4");
-			 t4.addWriteOperation("X", "v3");
-			 t4.addReadOperation("X");
-			 client1.put(t4);
+			 
+			 Transaction t2 = new Transaction("T2");
+			 t2.addWriteOperation("X", "v2");
+			 t2.addReadOperation("X");
+			 client1.put(t2);
 		}
-		System.out.println("errtimeout " + App.errtimeout);
-		System.out.println("errreject " + App.errreject);
+		System.out.println("commit " + App.commit);
+		System.out.println("abort " + App.abort);
 		System.out.println(App.err4Str);
 
 		// test stopping server

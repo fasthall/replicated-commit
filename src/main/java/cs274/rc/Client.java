@@ -151,10 +151,12 @@ public class Client extends Thread {
 		if (readingPool.getSize() <= clusterManager.getReplicaNumber() / 2) {
 			result = false;
 			System.out.println("Read " + operation.getKey() + " aborts.");
+			++App.abort;
 		} else {
 			String value = readingPool.getMostRecentValue();
 			System.out.println("Most recent data of " + operation.getKey()
 					+ " is " + value);
+			++App.commit;
 		}
 		readingPools.remove(voteID);
 		return result;
