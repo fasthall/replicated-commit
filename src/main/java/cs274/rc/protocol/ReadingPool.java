@@ -1,4 +1,4 @@
-package cs274.rc;
+package cs274.rc.protocol;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -5,7 +5,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeoutException;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -17,6 +16,10 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.ConsumerCancelledException;
 import com.rabbitmq.client.QueueingConsumer;
 import com.rabbitmq.client.QueueingConsumer.Delivery;
+
+import cs274.rc.protocol.PaxosPool;
+import cs274.rc.protocol.ReadingPool;
+
 import com.rabbitmq.client.ShutdownSignalException;
 
 public class Client {
@@ -44,7 +47,7 @@ public class Client {
 			queueingConsumer = new QueueingConsumer(channel);
 			replyQueue = channel.queueDeclare().getQueue();
 			channel.basicConsume(replyQueue, true, queueingConsumer);
-		} catch (IOException | TimeoutException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

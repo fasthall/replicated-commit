@@ -26,8 +26,9 @@ public class CommunicationTest extends TestCase {
 		return new TestSuite(CommunicationTest.class);
 	}
 
-	public void testReadRequest() throws UnknownHostException, IOException, InterruptedException,
-			ShutdownSignalException, ConsumerCancelledException, JSONException {
+	public void testReadRequest() throws UnknownHostException, IOException,
+			InterruptedException, ShutdownSignalException,
+			ConsumerCancelledException, JSONException {
 		System.out.println("testReadRequest");
 		Server dc1_0 = new Server("DC1_0", true, "dc1", 3, 3);
 		Server dc1_1 = new Server("DC1_1", false, "dc1", 3, 3);
@@ -50,7 +51,7 @@ public class CommunicationTest extends TestCase {
 
 		Client client1 = new Client("C1", 9, 3);
 		Thread.sleep(50);
-		for (int i = 0; i < 1000; ++i) {
+		for (int i = 0; i < 100; ++i) {
 			Transaction t1 = new Transaction();
 			t1.addWriteOperation("X", "v" + i);
 			t1.addReadOperation("X");
@@ -64,19 +65,19 @@ public class CommunicationTest extends TestCase {
 		System.out.println("abort " + App.abort);
 		System.out.println(App.err4Str);
 
-//		try {
-//			dc1_0.join();
-//			dc1_1.join();
-//			dc1_2.join();
-//			dc2_0.join();
-//			dc2_1.join();
-//			dc2_2.join();
-//			dc3_0.join();
-//			dc3_1.join();
-//			dc3_2.join();
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
+		// try {
+		// dc1_0.join();
+		// dc1_1.join();
+		// dc1_2.join();
+		// dc2_0.join();
+		// dc2_1.join();
+		// dc2_2.join();
+		// dc3_0.join();
+		// dc3_1.join();
+		// dc3_2.join();
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
 		// Thread.sleep(50);
 		// client1.send("exit", "localhost", serverPort1);
 		// Thread.sleep(50);

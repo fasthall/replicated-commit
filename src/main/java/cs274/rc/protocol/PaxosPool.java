@@ -1,4 +1,4 @@
-package cs274.rc;
+package cs274.rc.protocol;
 
 public class PaxosPool {
 

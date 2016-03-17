@@ -1,15 +1,11 @@
 package cs274.rc;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Vector;
 
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import com.rabbitmq.client.ConsumerCancelledException;
-import com.rabbitmq.client.ShutdownSignalException;
 import com.yahoo.ycsb.ByteIterator;
 import com.yahoo.ycsb.DBException;
 import com.yahoo.ycsb.Status;
@@ -30,13 +26,13 @@ public class YCSBClient extends com.yahoo.ycsb.DB {
 	}
 
 	@Override
-	public Status read(String table, String key, Set<String> fields, HashMap<String, ByteIterator> result) {
+	public Status read(String table, String key, Set<String> fields,
+			HashMap<String, ByteIterator> result) {
 		Transaction transaction = new Transaction();
 		transaction.addReadOperation(key);
 		try {
 			client.put(transaction);
-		} catch (ShutdownSignalException | ConsumerCancelledException | IOException | JSONException
-				| InterruptedException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return Status.ERROR;
 		}
@@ -44,14 +40,13 @@ public class YCSBClient extends com.yahoo.ycsb.DB {
 	}
 
 	@Override
-	public Status scan(String table, String key, int recordcount, Set<String> fields,
-			Vector<HashMap<String, ByteIterator>> result) {
+	public Status scan(String table, String key, int recordcount,
+			Set<String> fields, Vector<HashMap<String, ByteIterator>> result) {
 		Transaction transaction = new Transaction();
 		transaction.addReadOperation(key);
 		try {
 			client.put(transaction);
-		} catch (ShutdownSignalException | ConsumerCancelledException | IOException | JSONException
-				| InterruptedException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return Status.ERROR;
 		}
@@ -59,13 +54,13 @@ public class YCSBClient extends com.yahoo.ycsb.DB {
 	}
 
 	@Override
-	public Status insert(String table, String key, HashMap<String, ByteIterator> values) {
+	public Status insert(String table, String key,
+			HashMap<String, ByteIterator> values) {
 		Transaction transaction = new Transaction();
 		transaction.addWriteOperation(key, new JSONObject(values).toString());
 		try {
 			client.put(transaction);
-		} catch (ShutdownSignalException | ConsumerCancelledException | IOException | JSONException
-				| InterruptedException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return Status.ERROR;
 		}
@@ -73,13 +68,13 @@ public class YCSBClient extends com.yahoo.ycsb.DB {
 	}
 
 	@Override
-	public Status update(String table, String key, HashMap<String, ByteIterator> values) {
+	public Status update(String table, String key,
+			HashMap<String, ByteIterator> values) {
 		Transaction transaction = new Transaction();
 		transaction.addWriteOperation(key, new JSONObject(values).toString());
 		try {
 			client.put(transaction);
-		} catch (ShutdownSignalException | ConsumerCancelledException | IOException | JSONException
-				| InterruptedException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return Status.ERROR;
 		}
