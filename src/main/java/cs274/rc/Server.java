@@ -80,7 +80,6 @@ public class Server extends Thread {
 				startCohort();
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -92,12 +91,6 @@ public class Server extends Thread {
 			@Override
 			public void handleDelivery(String consumerTag, Envelope envelope,
 					BasicProperties properties, byte[] body) throws IOException {
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
 				String message = new String(body, "UTF-8");
 				String replyTo = properties.getReplyTo();
 				String corrID = properties.getCorrelationId();
