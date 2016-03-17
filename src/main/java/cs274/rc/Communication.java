@@ -4,14 +4,18 @@ public class Communication {
 
 	public static final String OPERATION_READ = "Read";
 	public static final String OPERATION_WRITE = "Write";
-	public static final String READ_REPLY = "ReadReply";
-	public static final String READ_REJECT = "ReadReject";
-	public static final String PAXOS_REQUEST = "PaxosRequest";
-	public static final String PAXOS_ACCEPT = "PaxosAccept";
-	public static final String PAXOS_REJECT = "PaxosReject";
-	public static final String TPC_PREPARE = "2PCPrepare";
-	public static final String TPC_ACCEPT = "2PCAccept";
-	public static final String TPC_REJECT = "2PCReject";
-	public static final String TPC_COMMIT = "2PCCommit";
+	public static final int READ_REQUEST = 1;
+	public static final int READ_ACCEPT = 2;
+	public static final int READ_REJECT = 3;
+	public static final int PAXOS_REQUEST = 4;
+	public static final int PAXOS_ACCEPT = 5;
+	public static final int PAXOS_REJECT = 6;
+	public static final int TPC_PREPARE = 7;
+	public static final int TPC_ACCEPT = 8;
+	public static final int TPC_REJECT = 9;
+	public static final int TPC_COMMIT = 10;
+
+	public static final String EXCHANGE_COORDINATORS = "coordinators";
+	public static final String EXCHANGE_REPLICAS = "replicas";
 
 }

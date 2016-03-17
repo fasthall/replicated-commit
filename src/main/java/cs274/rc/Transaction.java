@@ -6,6 +6,7 @@ package cs274.rc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Transaction {
 
@@ -14,6 +15,14 @@ public class Transaction {
 	private List<Operation> list;
 	private List<String> readSet;
 	private List<String> writeSet;
+
+	public Transaction() {
+		this.name = UUID.randomUUID().toString();
+		this.voteID = System.currentTimeMillis();
+		list = new ArrayList<Operation>();
+		readSet = new ArrayList<String>();
+		writeSet = new ArrayList<String>();
+	}
 
 	public Transaction(String name) {
 		this.name = name;

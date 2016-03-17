@@ -3,13 +3,11 @@ package cs274.rc;
 public class PaxosPool {
 
 	private String transaction;
-	private long voteID;
 	private int acceptCount;
 	private int rejectCount;
 
-	public PaxosPool(String transaction, long voteID) {
+	public PaxosPool(String transaction) {
 		this.transaction = transaction;
-		this.voteID = voteID;
 		acceptCount = 0;
 		rejectCount = 0;
 	}
@@ -32,10 +30,6 @@ public class PaxosPool {
 
 	public String getTransction() {
 		return transaction;
-	}
-
-	public long getVoteID() {
-		return voteID;
 	}
 
 }

@@ -1,110 +1,56 @@
 package cs274.rc;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
-import cs274.rc.connection.ClusterManager;
-import cs274.rc.connection.Node;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
-public class Client extends Thread {
+import com.rabbitmq.client.AMQP.BasicProperties;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.ConsumerCancelledException;
+import com.rabbitmq.client.QueueingConsumer;
+import com.rabbitmq.client.QueueingConsumer.Delivery;
+import com.rabbitmq.client.ShutdownSignalException;
+
+public class Client {
 
 	private String name;
-	private String hostname;
-	private int port;
-	private ServerSocket serverSocket;
-	private ClusterManager clusterManager;
+	private int replicaNum;
+	private int coordinatorNum;
 
-	private HashMap<Long, ReadingPool> readingPools;
-	private HashMap<Long, PaxosPool> paxosPools;
+	private Channel channel;
+	private QueueingConsumer queueingConsumer;
+	private String replyQueue;
 
-	public Client(String name, String hostname, int port,
-			ClusterManager clusterManager) {
+	public Client(String name, int replicaNum, int coordinatorNum) {
 		this.name = name;
-		this.hostname = hostname;
-		this.port = port;
-		this.clusterManager = clusterManager;
-		readingPools = new HashMap<Long, ReadingPool>();
-		paxosPools = new HashMap<Long, PaxosPool>();
-	}
+		this.replicaNum = replicaNum;
+		this.coordinatorNum = coordinatorNum;
 
-	@Override
-	public void run() {
+		ConnectionFactory factory = new ConnectionFactory();
+		factory.setHost("localhost");
 		try {
-			serverSocket = new ServerSocket(port);
-			// System.out.println("Server " + name +
-			// " starts listening on port "
-			// + port);
-			while (true) {
-				Socket connectionSocket = serverSocket.accept();
-				BufferedReader bufferedReader = new BufferedReader(
-						new InputStreamReader(connectionSocket.getInputStream()));
-				final String received = bufferedReader.readLine();
-				System.out.println("Client " + name + " received: " + received);
-				new Thread() {
-					@Override
-					public void run() {
-						try {
-							handleOperation(received);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}.start();
-			}
-		} catch (IOException e) {
+			Connection connection = factory.newConnection();
+			channel = connection.createChannel();
+			channel.exchangeDeclare(Communication.EXCHANGE_COORDINATORS, "fanout");
+			channel.exchangeDeclare(Communication.EXCHANGE_REPLICAS, "fanout");
+			queueingConsumer = new QueueingConsumer(channel);
+			replyQueue = channel.queueDeclare().getQueue();
+			channel.basicConsume(replyQueue, true, queueingConsumer);
+		} catch (IOException | TimeoutException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				serverSocket.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
-	private void handleOperation(String received) {
-		String[] cmd = received.split(" ");
-		if (cmd[0].equals(Communication.READ_REPLY)) {
-			long voteID = Long.parseLong(cmd[3]);
-			if (readingPools.containsKey(voteID)
-					&& readingPools.get(voteID).getTransaction().equals(cmd[2])
-					&& readingPools.get(voteID).getKey().equals(cmd[4])) {
-				readingPools.get(voteID).addDataFromReplica(cmd[1], cmd[5],
-						Long.parseLong(cmd[6]));
-			}
-		} else if (cmd[0].equals(Communication.READ_REJECT)) {
-			long voteID = Long.parseLong(cmd[3]);
-			if (readingPools.containsKey(voteID)
-					&& readingPools.get(voteID).getTransaction().equals(cmd[2])
-					&& readingPools.get(voteID).getKey().equals(cmd[4])) {
-				readingPools.get(voteID).addReject();
-			}
-		} else if (cmd[0].equals(Communication.PAXOS_ACCEPT)) {
-			long voteID = Long.parseLong(cmd[1]);
-			if (paxosPools.containsKey(voteID)
-					&& paxosPools.get(voteID).getTransction().equals(cmd[2])) {
-				paxosPools.get(voteID).addAccept();
-			}
-		} else if (cmd[0].equals(Communication.PAXOS_REJECT)) {
-			long voteID = Long.parseLong(cmd[1]);
-			if (paxosPools.containsKey(voteID)
-					&& paxosPools.get(voteID).getTransction().equals(cmd[2])) {
-				paxosPools.get(voteID).addReject();
-				;
-			}
-		}
-	}
-
-	public boolean put(Transaction transaction) throws UnknownHostException,
-			IOException {
+	public boolean put(Transaction transaction) throws UnknownHostException, IOException, ShutdownSignalException,
+			ConsumerCancelledException, JSONException, InterruptedException {
 		boolean result = false;
 		List<Operation> writeBuffer = new ArrayList<Operation>();
 		while (true) {
@@ -129,93 +75,85 @@ public class Client extends Thread {
 		return result;
 	}
 
-	private synchronized boolean sendReadRequest(Transaction transaction,
-			Operation operation) throws UnknownHostException, IOException {
+	private boolean sendReadRequest(Transaction transaction, Operation operation) throws UnknownHostException,
+			IOException, ShutdownSignalException, ConsumerCancelledException, InterruptedException, JSONException {
 		boolean result = true;
-		long voteID = transaction.getVoteID();
-		readingPools.put(voteID, new ReadingPool(transaction.getName(),
-				operation.getKey()));
-		String data = operation.toString() + " " + transaction.getName() + " "
-				+ voteID + " " + hostname + " " + port;
+		ReadingPool readingPool = new ReadingPool(transaction.getName(), operation.getKey());
+		JSONObject readJson = new JSONObject();
+		readJson.put("action", Communication.READ_REQUEST);
+		readJson.put("transaction", transaction.getName());
+		readJson.put("key", operation.getKey());
+
 		// Send read request to all replicas
-		for (Node replica : clusterManager.getReplicas()) {
-			send(data, replica.getHostname(), replica.getPort());
-		}
-		long startTime = System.currentTimeMillis();
-		ReadingPool readingPool = readingPools.get(voteID);
-		while (readingPool.getSize() <= clusterManager.getReplicaNumber() / 2
-				&& readingPool.getSize() + readingPool.getReject() < clusterManager
-						.getReplicaNumber()) {
+		String corrID = UUID.randomUUID().toString();
+		BasicProperties props = new BasicProperties.Builder().correlationId(corrID).replyTo(replyQueue).build();
+		channel.basicPublish(Communication.EXCHANGE_REPLICAS, "", props, readJson.toString().getBytes());
+
+		while (readingPool.getSize() <= replicaNum / 2
+				&& readingPool.getSize() + readingPool.getReject() < replicaNum) {
 			// Waiting data from majority
+			Delivery delivery = queueingConsumer.nextDelivery();
+			if (delivery.getProperties().getCorrelationId().equals(corrID)) {
+				JSONObject json = new JSONObject(new String(delivery.getBody()));
+				if (json.getInt("action") == Communication.READ_ACCEPT) {
+					String value = json.getString("value");
+					long version = json.getLong("version");
+					readingPool.addDataFromReplica(value, version);
+				} else if (json.getInt("action") == Communication.READ_REJECT) {
+					readingPool.addReject();
+				}
+			}
 		}
-		if (readingPool.getSize() <= clusterManager.getReplicaNumber() / 2) {
+		if (readingPool.getSize() <= replicaNum / 2) {
 			result = false;
 			System.out.println("Read " + operation.getKey() + " aborts.");
-			++App.abort;
 		} else {
 			String value = readingPool.getMostRecentValue();
-			System.out.println("Most recent data of " + operation.getKey()
-					+ " is " + value);
-			++App.commit;
+			System.out.println("Most recent data of " + operation.getKey() + " is " + value);
 		}
-		readingPools.remove(voteID);
+		readingPool = null;
 		return result;
 	}
 
-	private synchronized boolean sendPaxosRequest(Transaction transaction,
-			List<Operation> writeBuffer) throws UnknownHostException,
-			IOException {
-		// cmd[0] = PaxosRequest
-		// cmd[1] = vote ID
-		// cmd[2] = writeBuffer
-		// cmd[3] = transaction
-		// cmd[4] = hostname
-		// cmd[5] = port
-		long voteID = transaction.getVoteID();
-		paxosPools.put(voteID, new PaxosPool(transaction.getName(), voteID));
-		String data = Communication.PAXOS_REQUEST + " " + voteID + " "
-				+ serializeBuffer(writeBuffer) + " " + transaction.getName()
-				+ " " + hostname + " " + port;
+	private boolean sendPaxosRequest(Transaction transaction, List<Operation> writeBuffer) throws UnknownHostException,
+			IOException, JSONException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
+		PaxosPool paxosPool = new PaxosPool(transaction.getName());
+		JSONObject paxosJson = new JSONObject();
+		paxosJson.put("action", Communication.PAXOS_REQUEST);
+		paxosJson.put("transaction", transaction.getName());
+		paxosJson.put("buffer", serializeBuffer(writeBuffer));
+		paxosJson.put("version", System.currentTimeMillis());
+
 		// Send Paxos accept request to all the coordinators
-		for (Node replica : clusterManager.getReplicas()) {
-			if (replica.isCoordinator()) {
-				send(data, replica.getHostname(), replica.getPort());
+		String corrID = UUID.randomUUID().toString();
+		BasicProperties props = new BasicProperties.Builder().correlationId(corrID).replyTo(replyQueue).build();
+		channel.basicPublish(Communication.EXCHANGE_COORDINATORS, "", props, paxosJson.toString().getBytes());
+
+		while (paxosPool.getAcceptCount() + paxosPool.getRejectCount() < coordinatorNum
+				|| paxosPool.getAcceptCount() <= coordinatorNum / 2) {
+			// wait for majority
+			Delivery delivery = queueingConsumer.nextDelivery();
+			if (delivery.getProperties().getCorrelationId().equals(corrID)) {
+				JSONObject json = new JSONObject(new String(delivery.getBody()));
+				if (json.getInt("action") == Communication.PAXOS_ACCEPT) {
+					paxosPool.addAccept();
+				} else if (json.getInt("action") == Communication.PAXOS_REJECT) {
+					paxosPool.addReject();
+				}
 			}
 		}
-		long startTime = System.currentTimeMillis();
-		PaxosPool paxosPool = paxosPools.get(voteID);
-		while (paxosPool.getAcceptCount() + paxosPool.getRejectCount() < clusterManager
-				.getCoordinatorNumber()
-				|| paxosPool.getAcceptCount() <= clusterManager
-						.getCoordinatorNumber() / 2) {
-			// Wait for majority
-//			if (System.currentTimeMillis() > startTime + 500) {
-//				// timeout
-//				break;
-//			}
-		}
+
 		boolean result;
-		if (paxosPool.getAcceptCount() > clusterManager.getCoordinatorNumber() / 2) {
+		if (paxosPool.getAcceptCount() > coordinatorNum / 2) {
 			// commit success from client's view
-			System.out.println("Client " + name + " successfully commits "
-					+ transaction.getName() + ".");
+			System.out.println("Client " + name + " successfully commits " + transaction.getName() + ".");
 			result = true;
 		} else {
 			// abort
 			System.out.println("Not enough accepts, abort.");
 			result = false;
 		}
-		paxosPools.remove(voteID);
 		return result;
-	}
-
-	private synchronized void send(String data, String hostname, int port)
-			throws UnknownHostException, IOException {
-		Socket clientSocket = new Socket(hostname, port);
-		DataOutputStream outToServer = new DataOutputStream(
-				clientSocket.getOutputStream());
-		outToServer.writeBytes(data + '\n');
-		clientSocket.close();
 	}
 
 	public String serializeBuffer(List<Operation> writeBuffer) {
@@ -223,8 +161,7 @@ public class Client extends Thread {
 			return ",";
 		String serializedBuffer = "";
 		for (Operation operation : writeBuffer) {
-			serializedBuffer += operation.getKey() + ":" + operation.getValue()
-					+ ",";
+			serializedBuffer += operation.getKey() + ":" + operation.getValue() + ",";
 		}
 		return serializedBuffer;
 	}

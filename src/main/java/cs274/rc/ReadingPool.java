@@ -17,21 +17,16 @@ public class ReadingPool {
 		rejected = 0;
 	}
 
-	public synchronized void addDataFromReplica(String replica, String value,
+	public void addDataFromReplica(String value,
 			long version) {
-		for (ReadingData data : list) {
-			if (data.replica.equals(replica)) {
-				return;
-			}
-		}
-		list.add(new ReadingData(replica, value, version));
+		list.add(new ReadingData(value, version));
 	}
 
-	public synchronized void addReject() {
+	public void addReject() {
 		++rejected;
 	}
 
-	public synchronized String getMostRecentValue() {
+	public String getMostRecentValue() {
 		String value = null;
 		long version = 0;
 		for (ReadingData data : list) {
@@ -43,11 +38,11 @@ public class ReadingPool {
 		return value;
 	}
 
-	public synchronized int getSize() {
+	public int getSize() {
 		return list.size();
 	}
 
-	public synchronized int getReject() {
+	public int getReject() {
 		return rejected;
 	}
 
@@ -68,12 +63,10 @@ public class ReadingPool {
 	}
 
 	private class ReadingData {
-		public String replica;
 		public String value;
 		public long version;
 
-		public ReadingData(String replica, String value, long version) {
-			this.replica = replica;
+		public ReadingData(String value, long version) {
 			this.value = value;
 			this.version = version;
 		}
