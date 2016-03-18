@@ -1,0 +1,656 @@
+YCSB Client 0.1
+Command line: -t -db cs274.rc.YCSBClient -P workloads/workloada -threads 128 -s
+read
+read
+read
+read
+read
+read
+read
+read
+read
+read
+read
+read
+read
+read
+update user8396529402727210653 {"field5":"$  0Re940-).76n*)\"'E5!]=##p&\"l#C-1;p\/Ns\"0<?I;4?p<+:4),8,t'Hg;^;!R1='~3C;#Gi\/(l(H7)>b,L=(?b\" `>Us%X19"}
+update user4978058350489114629 {"field4":")?v.]#!3n2:b#P+=N-1Xq#?<1D;,S3.(  J=.\\a+Ag31 %J'3(t?G)']9%04-^--2\"#<h3F%;\"4X1)Iw6#40=.!#|*Le**z*Ei&"}
+update user7450949526760075524 {"field0":"%,`6Su<+r;+p%Be2 t,N}.J1,4v*0:4\\'-(z?!~\/<6$.n2Uu?Aq&.l1.2(Zo-Fw;Dm58\"<O9>N;9;h700(#r><,,5~,#t\"Lc2%00"}
+update user2272843847929036714 {"field1":"\"4\")3:28v\"Om1,0('(,.* A\/6H-5@c&<p\/Ju&'&!Dk#&p**r'Ui*\"`$M18=<$U+4;(+4v2$j%Mo6%b\"O-5\/f5>$%Ai(S-1 \":?v&"}
+transaction terminates, start Paxos
+update user3810989078589977303 {"field2":"6;\"=\/z1$(8Ly8_+%Bg1Ty;5v&>p:@e\/0d3*d-00(#x3Uy:=l4D=,Ag63x?1&%-4%Ko=^'$>~;(h*$0$568&4,::()..#j674 %v>"}
+transaction terminates, start Paxos
+update user1121294688406281892 {"field5":"$Vq246'@w>$:+><!:t%Nm\/Q!'.\" Y1!_e3*|&6h.8*$,$0Qc1\"&8Z':=<4@i*Y14C\/\/\"x.To.^y> d=J%=De!Cq#3d8[a:K!9=v&"}
+transaction terminates, start Paxos
+transaction terminates, start Paxos
+transaction terminates, start Paxos
+update user3831195372985627488 {"field2":"-H%,Q?!C'4Nk-Ko'.n6_+4$j(\\q:E#6E=9Cu<Ra&@o9!j;.6\"Ww7\" *3,)Lu&(~+9$'1d7G970)Lw:Tm&Wc$=v;\"<)& 0Vy'H{2"}
+transaction terminates, start Paxos
+update user8034484162709644187 {"field8":"5,6<5t=,65N3)9f74p;@y&S7%-d'R-1$44@o18~>2d9Fk>Sk)_112& 5(%@w:Kk;;n(=|\"M7>I')Sw<4*946?$,<8p)0l3<<)L' "}
+transaction terminates, start Paxos
+update user899463647179981130 {"field9":"8Um'<~&:r\/$b!.$%^y,1,% 8>#d\"W)0&!?`.> ),h$4h'.40E5=S+,6b??j%^9=:,-'n\"My*(41=(!%.5\"452 (-\":82=Aa6<`3"}
+transaction terminates, start Paxos
+update user7460663536092909451 {"field7":":Dq:2x-O'%.p)Z!1^c\/Hu37t,H)5Ci5S!=V-#^}*>|?\"6 ?d&&f&>f05n&O3&^o7)`1Cg\"Mq Zi>4(,5$!R17 d.#l!Is?Xi32~>"}
+transaction terminates, start Paxos
+update user1125980870425549573 {"field9":"5A\/$Jc<,$9=6!8`._!=.p\/^y(>.1;`0Pq;$,\"E#8J76=&%Pu\/Dq7V3 H\/8# 9;x#[) Oi3Mk$=20>2-= %3 1Ac79.2\\5=M7!O{*"}
+transaction terminates, start Paxos
+update user8747959027605504179 {"field3":"&78(^o>'x7[w9?*9Rc(9`+^1?4~?,r1?n2?|7@?9[-9K{?,*93n&F+'>251t<_)-Wo:Mg&Dk<I-!Gk# x+62 -h:9n)Qs&Gc,J{6"}
+transaction terminates, start Paxos
+update user176616418245585776 {"field4":"$=$%Q=8F\/=Yq4]'0K39(j>8z-_%8\\e9 n3Hu<X%4?p*F{?Gc\";4$#.9I{+Oc?Cy2\"l\"Bo: **&t7,:\"1$0H%=3, Uc*P54U\/<#t3"}
+transaction terminates, start Paxos
+transaction terminates, start Paxos
+update user7571517391667831491 {"field0":"7Pi>,6=# 55v=!2<Qi%=j7Cs3>d6B7\"W==8(14h:>:(44-K-.\"\"%5:-K5%X=([30Qe:!z7M%,Hs:(`-Gm>_!1P'$$(!1h#]5-*<("}
+update user3936803086029141399 {"field3":"1;`?Y)>%r2?($Ns\/R9$;,8-\"\"*b>!>(Sk\/5:>;d\"\/d+Ca6_)(\"~*66)-t2$h$-*,]{6#.$Z2W=8Z-9W-9Fu!D+,8h B5<8. Gc."}
+transaction terminates, start Paxos
+transaction terminates, start Paxos
+read
+read
+update user6038618303538299031 {"field5":"\"Ew\/0`-We:?z$$*9Sy!Ru\/!r;.h&'00I}#Za5N}>&80*.-0 1741V!=*l?D\/6P-!Ok0I}\"947%8 Gg(D}#7r:L.3t1I+=9('Ru3"}
+transaction terminates, start Paxos
+read
+update user2288022315011120653 {"field6":"&Ii?Nk 3|&W+52:,!.8Tw+Yy:(.8Q{0Kk\"!| 2j.U)8O5,Y!'P\/<!h&4~:%**5b':2\"=j'Qs$^7<5n4!r2.*4Z}#W- 3:) *&)x#"}
+transaction terminates, start Paxos
+update user9114690449642338326 {"field7":"\"S)5^#&#~' >$&$-5$<X?(:8,;*<0 9Xs7Lw*)&9!(-!*8,.\/!<=@?%Zo;O15@; P+>b.$> ]k65|8S%,>&)Hw*2\"+F'$560F7="}
+transaction terminates, start Paxos
+update user6274507890822402836 {"field0":".->)K5+d\"9::>~>:,6Y;$,h0N; ]g8_;9T-%)4(Hs((z24&4(4%B{&Dq*\/b*Oe?*\"%G1!^w%Zw>[s2=f\/20)3*$^7): -Xk)Y'0"}
+transaction terminates, start Paxos
+update user6068196961972484578 {"field2":"8;|.\/|36p69t:*\"!E+-*8=Ja#L%,Ea?<l:S)\"0t'$|\"$\"=2`\"@m;[)6;~.M7)%4 ]{#Ia'Q9>Bs.6b>,z3_5(4`+O=:<&<&>7A9-"}
+read
+transaction terminates, start Paxos
+update user2644821412497278990 {"field2":"=4\"89|51|\"Pe4%~#0( Ys:5(29|?>n(O#8Bu>Jw;<\"8($9&n3%`>X!]k+\/v!M7)#z.W95)~<745 <.#242\".3f'_-03,,#<'_34"}
+transaction terminates, start Paxos
+read
+update user8054690457105294372 {"field9":")#8(?&)Ns2D2=p7R%\/>~*_'+U}&$8 Wg\/@w-Rg6E\/0Pg.Xg24$)]5)8.)Ja9 $8Tg7T-1Sk6Dk\"10?Zq2\/:>Rm6V-1X!!&$1.(8"}
+transaction terminates, start Paxos
+read
+read
+update user2056600594528442646 {"field5":">Z;$9:$C=0<*#Gc7Y+)M{&'l6Z#!Wg=W5)^m%;r\/V'-\\)0C%90r;Y{>Io&\/j;Bc\/N+2*-,&!H}>V})* $Nm\/8v#Cm3?05\\5.0`\/"}
+transaction terminates, start Paxos
+read
+update user7692645217087727906 {"field4":"=\\g.9`1'<)B%9F71F?.=6,[u*M),8t4^a?W5&3v?-b6^m3\/b&T1(V5,-|+X='Ha'A5=0<50v5E?(F\/)Bi624(Hq. z*G9<My7#f:"}
+transaction terminates, start Paxos
+update user8999928687778130936 {"field2":"?0<-P+<5`;@%,>z2;n=Vy7\"p;N=0I9#Qo.\/~?U%!(r8W3<5d!*x'9<?R3,Km=3r'#l;(p2-(1,x#]\/;9~&K7)7 (!n$N-('$%Z-4"}
+transaction terminates, start Paxos
+read
+update user4409483866403788022 {"field7":"0Se\"!$-I+-Pq6I14=l& p69&5!d.U'<Nm#@*?d#5\"3Ze'8(4Nq#Kc;Zc\"\/&=]o:J;8&n\"5\"'V=< d;;,-D-<T+9:l5@k:P)\/;,5"}
+transaction terminates, start Paxos
+read
+read
+read
+update user2176826814141900048 {"field6":"4Lq2\"87#8$Kc!1x&^}95&%\"r*Qi:I?,&*%R+ Cs\"Mq5*0 %t3]c?Mo4:.0Yo*N'5Ss,!.9K+9\\{*\"<44(9O=.44<Qw0S;0Q?$Aa;"}
+transaction terminates, start Paxos
+update user2745182983009384772 {"field7":"%<p+3h?%z*50*_!8%8.Zi.-<-\"|>'j*9.-Ow.Bw2@#4=:1J='Em\"[!6_{:;*%\/(9Qi1+ !B'-Vo*Mo:>z\/V\/-H'%H+1Z{\/A#(Ym\""}
+read
+transaction terminates, start Paxos
+read
+read
+update user7456195669291483653 {"field6":"\/B;9?p'P\/$-<#\/p6Q?6I3<_) 4~'Q3\"H=4R-('f7#.>Yi20d*+~7, &J380(\/3v\/]?=G'544#?`>(z;Ua;_i=^71Za&F==^\/$@e?"}
+update user8748518988117644627 {"field2":"*9f31>!8,=-r0Do\/Aq*G7<,z Z;8=65) 48x\/Uy>+08?t+Ks >b';|\/%&4T\/7V94Ng S+9)(-!`7<p\".p\":.')(4M%&Ds>&>>5d6"}
+read
+transaction terminates, start Paxos
+transaction terminates, start Paxos
+update user7461441811822891782 {"field5":"3$t26<>H)<;08P? ^}<:b#M\/7>v2;6-[5)1::G11O96>v#R\/\"z>Ls'#>(No+-r\/=~)F#5\/6 \\7<C)13|'\\=26~3^10Zq>Dc75j3"}
+transaction terminates, start Paxos
+read
+update user5827061232156972644 {"field8":"*$l\/? 8Bq2A{08b#0f#Zs>#02& 1$x35f*4h8#f;Y?9\\=%H1;~?E#8-j#4~'+ 1Uk2801$>2#*(M(W9 Dy Na;2j?66(+*6T!="}
+transaction terminates, start Paxos
+read
+update user1568741347071712084 {"field9":"\"-p3J7_y:R+7Q}?C196t#D30[k>]o#(6)Pq:D'Vm'9h?%z-:z3*b5$,)Fw3#f\"+j?72-&z6Bo:7v<O))\\'23\",;<>Z)(.6\/X'1"}
+read
+transaction terminates, start Paxos
+update user2056258949234144081 {"field6":"+G5<F;0K3)9`$\"2)Ry+)&12,&[#1F+6Aw76p0Q?=2((_'!8j.\"b7Xw7,2%K58A7 P95Q=1_#++j\/5x7T)=V9(Rk7Ii9Eq.1b,Bq6"}
+read
+transaction terminates, start Paxos
+update user7707045408439829514 {"field5":"=4.8 :)^!=O12%& 8d1,r\/;p Ug6)b)\/4<.0%Xg>#$(!`>#>?'88)t)!t'<r H}*;  =|+0<![g;D+.x'.&!Q-14z H1,H'(A!$"}
+transaction terminates, start Paxos
+read
+read
+update user8747959027605504179 {"field9":"<Ty.<.6S7<@98#<9E)3!6=;z#D3,\"d7_)!@)6G#$;\"?P%,,z6F)57j*K51_-5Me*(,(5&%J+-&z7*0:L)8G9_7,Vw.'(9D=-2l\""}
+transaction terminates, start Paxos
+read
+read
+update user7566831209648563810 {"field0":"0G+5W+9W18[o)\\u?Dk=Nu?Ne\"K!8$$2\"h?L7.20=0\" J}:^{80v?3n!1h;X+1\\?(Li69j#Qy&(:=Ca5Mo7*\">H!<H;&S=4H4S}6"}
+transaction terminates, start Paxos
+read
+update user6063510779953216897 {"field3":"%Ls&Y7<*> 8>03*0=4>L),?<9@s?'~5*:)Au7,x#Nu#I}2\\;+Lc6X11+05Ou$F1)Cy&X#1]3&V{;Cg&Ns?Og,'*,.69) 13x3'x."}
+transaction terminates, start Paxos
+update user3362982459412406663 {"field0":"%&2,80!3|;@{1Bm\"B5 :r:J;22<(?><]o3[i3Di7Pm7$<=Fo4?8$M9\/Lu#8b?*,5,\"6Lw>1r'4v.K\/?(<4Qk8N94+4#[u;K5.#6%"}
+transaction terminates, start Paxos
+update user3599991967720791364 {"field7":"14(<Bc'H=$_m1Z5$V'$R7<:&\"!\"9.0:%8(9h!>< P-=0`*5:2-x:S%9Mg*Pk=Uc:2 2\" 4A9\/;v6Q'8,t'H;5?$4\\m%Fi:)n4N;0"}
+transaction terminates, start Paxos
+update user9110564228135211093 {"field7":"$O)$4>?7p>@1\",09C%24:-1n=&f&]e2M)!P9?-84\/n%E{.Oq%1p:1$2Di##$8?6%\"d)Tu?,j$-x'!464n\/Kc6Z{3\\'=8.-9n#O&"}
+transaction terminates, start Paxos
+update user1960583560741305980 {"field2":"(R?4,>*\\s:]e>+*9Ik(%r>42?,>%6v<Ss'+d:60<My$R;4N?&0b7M9*V;1U#4!x#^0_k?+:3Cg\"@9*F18(,::r3:z4Io7)|%8b+"}
+transaction terminates, start Paxos
+update user7335627804383727686 {"field3":"35|?,*:6&98z1- %=:03<=#b) b.1j<#~:U'2Ke+Bc=:`&2>'@-=)0$:z6Cq2%&-=289|#,(4H}7_+0[#!R5'Ey&S?,Lq>J-97:,"}
+transaction terminates, start Paxos
+update user5600544008911404201 {"field1":"3No&D!?1:%Y5)C1%-d'P7=J19D\/94~=\\g:-:9 ,$Qo7?v'Sa8H{.*j5(b?E5#B}\/Y=<B#1&\"3[g7Z):Ru?#r [s#Hc*?$9]c-R)9"}
+transaction terminates, start Paxos
+read
+read
+update user5701807185229948996 {"field8":"&$.$H?8H'$'6114-\"t.;d39~(Lg&Jq\"G;(6>>\/ 08&:Iw#A?-*2-^=-*`*.0.Ey2648+t#[5-G?-5\"*#:!5v9[k?\\-\/+68.6<6r7"}
+update user8059376639124562053 {"field7":"*Xo&:89:f>'$$1&5(()3&!>b34d*;p6Xi3;|+,,)0,,<.(G15Nk\/Uq&@w2\/h\"(2 C;=(p\"5j\/; =:*\/Xo\/<l!Pe>M+56d?X?%Vo:"}
+transaction terminates, start Paxos
+transaction terminates, start Paxos
+update user8165325997462374529 {"field3":"\/(`\"K1>6, Ba6;,8\/t*J{*]y%Ny#\\;.J\/!92$E)8=,5%6(]3(#j>L{\"\\?< >\/p:Q))*0-K{.86 _-%C=<^70Y\/9O+56p7%n(3v;"}
+transaction terminates, start Paxos
+update user9110004267623070645 {"field1":"=Eg?Ne,]{+Xe%G=9Cc C--:>+P98,v#;x70(<':5F{.-f2'h:\/r>D?:G7$+.+(\"$V13Bm?^o!Ni\/Hm2@;0U#'Eo6\/$)\/p+;n=\/n7"}
+transaction terminates, start Paxos
+update user8170230494699484093 {"field8":" U9=>j5:24-2;?h+H1+3*=9.*<0 O'$W{3;j9P!$F):Gy+X!'-21^- Kw\"2(;V'=>j$[%,^m8?.$Ks4^q.[962~\/0p$;r\/R56+6("}
+update user6274507890822402836 {"field0":"\"Vm+A7:@'9+b)4 (B(0p\"22%;.-?6<*04:&>'.$&80Mw+1d&&>)B\/<Oc:%<;\/246~?>~2_a![?-O?3%* $n%?l7Zm#3p;82>[e:"}
+transaction terminates, start Paxos
+transaction terminates, start Paxos
+update user1473065958578873983 {"field7":"\">h;4l66*5Z}%\\w:V1\":$0$(6#z7 4(W38R}4Di&Wy-5l&6h?\"*<A>;v+H#;A!),z\/<x3O%2$`>L%2@#=Lg<[)<Sm(Ty?D{9?r*"}
+transaction terminates, start Paxos
+read
+read
+read
+update user4298288365534567417 {"field4":"2@e?8:)Ag*K{'!(19 48t'=8$5\"5A;26 4\\+\"'`6B{!\\9,900B\/!7z#?25?\"0'8)$,0&r#Bs-;x>Co7?`\"-z'? ,M1<1*(Ie2Ma2"}
+transaction terminates, start Paxos
+read
+update user6872661033341914990 {"field4":":#00Ww&52=>h8F}22n:Ui*08&\/z\/Q%\/6>%8<17`?Q\/?3&9'l<Jw.00>)~&J'2\\y?Y?*Sg**~%?~6]-*# $5r9T5=Bq,640Zy-Sm3"}
+transaction terminates, start Paxos
+read
+read
+read
+update user4630973262335790219 {"field2":"'G}3Q;5Qe;&(<D'4:f:Sa:9$)6&-!t)Im>X;4@;1'<(&t:\\+6_e6& =Cs.G'.:t#A=;(h3F\/:L?4M%65r?\\!3A%0^3,Pg;8b<)z>"}
+transaction terminates, start Paxos
+read
+update user4886509183503403761 {"field2":"3H!4@e93z'#<96f7Zw'Pu2$h;;t.)l;8d+.j\/=(9Jk3H=$662'`\/2 $S#! `2Ry+0>*Hk.Nm0!p.Ko%Hy6J1,Qs\"X9F#0:(,4p?"}
+transaction terminates, start Paxos
+read
+read
+update user8758232997450478554 {"field3":"\"_{6&&3\\k.4>9(0$1t=Xe:-(4'p\";>+>p25~8(<,A5.\"v;Fm\/Q7 -j'J\/1N{,624\/`<B3=*>1K-%N';R{6?p>(\"!#<9=z#1`10f+"}
+transaction terminates, start Paxos
+update user3575099491305873498 {"field6":"&4j\/Im,Lu?X{+0:8]3$?($2t*G;9Me:4,%84,T1$K!1P5404'9`314%\/n.Mk-$($'x F}7H7:)x#;n!Do\"Rk#66!.,%%\"<G--(j\/"}
+transaction terminates, start Paxos
+update user8762919179469746235 {"field0":"\/Me&Bw10$!]q+[#%:p>5n#O;+!v?Ya87,9Rw4Qa?Ga0Rc*F;7_14H#.<p;X=.+\",%># `2T*$t\/]w<8l&Hg3,v>B7=G#5\"r25*$"}
+transaction terminates, start Paxos
+update user5474730001472240105 {"field8":"!=r:Y!1#,%Ko(<&,022Ta6]o,\/(-2l7)x+:r)G!,Z}-$<<8r#J{6;t,\/v7A\/8Ro>,<<Z'0Ji)C1, \"\"C%8X}05.%\\-<*2%Rc*G+1"}
+transaction terminates, start Paxos
+update user8295266226408665858 {"field4":"4-(96x :\",% )D{6*80?8$4p3%256: R-%;2(5x3V11.<55d#=:5L:+: H! @;46b\/Ag3Pu6*p&&:5?:99~>Zo6\/&)<450\"&%r+"}
+transaction terminates, start Paxos
+read
+read
+update user8517097267634966620 {"field9":"?2t&4$?^c?4 .Fu;Dy2^!,Om\"Tk'_o?,`?_1#,4!_3), <H\/5Da\/(,%\"t+1x.Ni#>\"#Mm>+6)[55E-5I\/%:4>,h2%v4@s7&z'Lq+"}
+transaction terminates, start Paxos
+read
+update user8155611988129540602 {"field4":"=G\/!*2G?#<)64=Vy$E? H\/#Tw&Hq#C{:E-+[;1%r1609Wc.Lg*>4+)>5Ne?@c*.8<'d'\/d#341Sm3%f*8x&H7-:h0),!\"2;6(0"}
+transaction terminates, start Paxos
+update user7919162440333296349 {"field4":"250(Z3\"T\/,\"h0(n>Cq,@*!2$Lg3N763v'1`3V785j#0l?% 5*,1Lu?;n?Jm>Js7\\e5Xk2((2(l'*|:J+%Jw'4l\"Q}:=48,~2!,%"}
+transaction terminates, start Paxos
+read
+read
+update user2649507594516546671 {"field4":"$Sw;Z)5C1,6t7&f>N;=&,8C?>%n;! 5)h70x*,  ) )Hm2Q}7Sk21z17n:Ay0Ge\/Hs,<8=?|7S')F!0Pm+M+=0v\"Pw+\/.8Je%&.1"}
+transaction terminates, start Paxos
+update user6279754033353810965 {"field6":"11`#18'Y%-=r;8|\/# -Nc#:,!E+5S7)%~+!$.Z-!<*;]?=^)<G)%=d8M?5E%$.b>701*()!|6Ps*Qu)E=4!f'R5-6>6Ly7[q=(r\/"}
+transaction terminates, start Paxos
+Most recent data of user6390389573710891122 is null
+transaction terminates, start Paxos
+Most recent data of user70107099395632852 is null
+transaction terminates, start Paxos
+update user4645591768905733710 {"field4":"?.4!((7)t2J+9I)(&|)6,(7r)'p6\/20(`7_72J=)Rq\/K;<G\/0E14\\y-B%<8|*%()H+'H?8)4#$8!X}#6p>?d*-$ Ve!\">552 N3="}
+transaction terminates, start Paxos
+update user8536961916736318240 {"field1":".!l\"K-'X?8D?\/Aw;+h,2>8Wg),d?Ss<)>-2>5+0%*v!V\/)6|;A1).>6,t',b$$v?8p$Q+%9v7C7).'58,4>*Og>(&+Jg#W%1A5="}
+transaction terminates, start Paxos
+Most recent data of user7827613273347585481 is null
+transaction terminates, start Paxos
+read
+Most recent data of user7093932114056075304 is null
+transaction terminates, start Paxos
+read
+Most recent data of user6284221900155236763 is null
+transaction terminates, start Paxos
+Most recent data of user7913916297801888220 is null
+transaction terminates, start Paxos
+Most recent data of user5103094082198296394 is null
+transaction terminates, start Paxos
+read
+read
+update user8748518988117644627 {"field1":"<7,8>2#(f#O+34t&Cs1Ee\"V=.6f2Nm1$|#-~%E' H+*O\/<(6>Y\/4Ho728!K{1!<1 b59<0>z=2p?[g')t#Y56Ty\/+* *8!+2(Us>"}
+transaction terminates, start Paxos
+Most recent data of user5942382954533320482 is null
+transaction terminates, start Paxos
+update user4519777761466569614 {"field8":"\/2:0Ee.$&4^-;V?!>b&^35J{3Va&D56>\"1Ua?>4%0b4%j\/=v1N7 Dy)\".)6,.Z3-(9Nu\"':&).,>d5Ac*2l3,<$H#6%h+\\i Fs'"}
+transaction terminates, start Paxos
+Most recent data of user6280313993865951413 is null
+transaction terminates, start Paxos
+Most recent data of user1015345330068469416 is null
+transaction terminates, start Paxos
+read
+update user1453419624695364246 {"field9":"\/3>,P{.3*!6*+)~79<)&f\"Mo(B%,!4+Ca\"0r&Bo*5n+@?<Nk:K}2[%9-4%N#'64<E7_a6&*<2x7Qu 5x6>l%1n&Bw1A?5!l-N;8"}
+transaction terminates, start Paxos
+Most recent data of user985766671634283869 is null
+transaction terminates, start Paxos
+update user5918050438630543064 {"field9":"5>89\\%):~?_y4Rw2(* %48Ik ^y'9`\"Yc:A{?R!%T=76\"8W)>@=$)|6\/6!E1# n&Fo0+61<h*\\1<Hi,D35#*\/Y)$Ra,<p6Gg<+~'"}
+transaction terminates, start Paxos
+Most recent data of user6737474661864215532 is null
+transaction terminates, start Paxos
+update user8527029592185642430 {"field3":"<26-F1970)\/d\"0n*'v4>n? 6+Je:F+=9v.Ek#12 Hg;[-,@y:.l6Xg*4. ;*$!6(^3- d.Jq.M+ . +T=%C;+;x6=,4\"41\"&\/Vm."}
+transaction terminates, start Paxos
+Most recent data of user8984750220696046997 is null
+transaction terminates, start Paxos
+read
+Most recent data of user1799944752336548208 is null
+transaction terminates, start Paxos
+Most recent data of user2649725909734388554 is null
+transaction terminates, start Paxos
+read
+update user4539424095350079351 {"field2":"\/Y-('*-22-=<>W%%9`='|#Fg2\"2!Ge=801Mm0Je\".\"=9h+?8;K};#t 8~&Y?;5p3L5%5`:Im\/*(<Pi-K)0A71Gc2Ok7<643095.-"}
+transaction terminates, start Paxos
+Most recent data of user3951203277381243007 is null
+transaction terminates, start Paxos
+Most recent data of user3001497179906980645 is null
+transaction terminates, start Paxos
+update user5324583478130298591 {"field1":" [i\"8~1Xk?U)+;t7Q\/$,8)Hk0P>Co-M'$&&\/8:$-r7*f\/1`+X3='`3>|*22,)j.Lq\"1x*\/(8:`6O)7Xy\/Oi,^90)6+Ga;Y+(W71"}
+update user3454531626398117531 {"field1":">N;=G{#Zk:!d#4b.$l.9j:?28>2(4,'@k*Ka\/).=Va0)2($,*$`&O{!.*9@94_?,Ne;>:<\"8,O)1?|<Ay+Za+.l'=|6&|6Mg*:b7"}
+transaction terminates, start Paxos
+transaction terminates, start Paxos
+Most recent data of user9221418083710133133 is null
+transaction terminates, start Paxos
+update user7576203573687099172 {"field1":"?G'(Xo55x7U6Vm>Mw>*8(=0&3n':2)@+!9f\"9 8J-14,9Y}\/4$8+l<\/f?Ly0Ee&Q19; 1A;9]m&\"~8$~;Fy9 x#J+!7t\/L\/32b#"}
+transaction terminates, start Paxos
+Most recent data of user4278642031651057680 is null
+transaction terminates, start Paxos
+update user6043304485557566712 {"field3":"5861Hk+O!5Ia(L'1Cm*:2)R'=L74<$*C}\/4j-X95B=&,|3)n.Im?&:(?~.Vo#6|#&r2Dy#:x-Ow6((5 ~.Ic\"Ea'%`01*-\/\"18v+"}
+transaction terminates, start Paxos
+Most recent data of user5600544008911404201 is null
+transaction terminates, start Paxos
+update user899463647179981130 {"field4":"6T;0Ta7Yc+8|>_i3+:(?j\"68+-r+;<& z?#p:Wq3J#:T5$H)4Do*$r5Va;%b++l?D+<4&)B'+.(,Q{9O1)5d.Xo'!21;p\/]1)My\""}
+transaction terminates, start Paxos
+Most recent data of user663574059895877325 is null
+transaction terminates, start Paxos
+Most recent data of user296624322641201295 is null
+transaction terminates, start Paxos
+Most recent data of user2528598084314492139 is null
+transaction terminates, start Paxos
+read
+read
+read
+Most recent data of user1940377266345655795 is null
+transaction terminates, start Paxos
+Most recent data of user5580679359810052581 is null
+transaction terminates, start Paxos
+Most recent data of user1945405093659222041 is null
+transaction terminates, start Paxos
+read
+Most recent data of user4997704684372624366 is null
+transaction terminates, start Paxos
+read
+Most recent data of user3932116904009873718 is null
+transaction terminates, start Paxos
+read
+update user890091283141445768 {"field7":"35f>U'+'(!?4.7b;>x%3b:X)\"-.$$h(70-Oy;D',[+*O{;!j)>f?>r7Km#3j(7z;@k)U-,8d#?r:;b>Du6_\/=%*4,f,H3%Z!$Hq+"}
+Most recent data of user899463647179981130 is null
+transaction terminates, start Paxos
+transaction terminates, start Paxos
+Most recent data of user3112132720264060802 is null
+transaction terminates, start Paxos
+Most recent data of user8049662629791728126 is null
+transaction terminates, start Paxos
+read
+Most recent data of user4645591768905733710 is null
+transaction terminates, start Paxos
+Most recent data of user8747959027605504179 is null
+transaction terminates, start Paxos
+update user2287803999793278770 {"field9":"%1( (:*Sy? ,,^o;&h6=|;<h5^o3)`8.6<Dg:Bu;>(1:<0L# &>4[{\"0(,#v*Em6$n>Z7R5+W}>Pa+8j&Wu;6t+Pq;Qu:Q7-Fm3"}
+update user301870465172609424 {"field7":"$F=!N3;Na?K%9&.1K939r*#|#-z7_3=\"~'&8(Sy:+f9.b2A-,\"0<Ye&3>,La40\"8[+9_!,N?3x2Am8E%<_q-C!$5p\/-x\/66)Kc&"}
+transaction terminates, start Paxos
+read
+transaction terminates, start Paxos
+Most recent data of user658327917364469196 is null
+transaction terminates, start Paxos
+Most recent data of user6178832502329564735 is null
+transaction terminates, start Paxos
+Most recent data of user8743272845586236498 is null
+transaction terminates, start Paxos
+read
+read
+Most recent data of user291596495327635049 is null
+transaction terminates, start Paxos
+update user7827613273347585481 {"field4":">18<8h1:&4Yy7=*=&85&\")+t$Ou#;t!U?$Z100h3Ka98z>1(+-n>@%06,1@a-Z= 7:9X;%P?*>41G+)* =Mc.<f3N#<\\3(*h?$t2"}
+transaction terminates, start Paxos
+Most recent data of user7235266233871621904 is null
+transaction terminates, start Paxos
+read
+update user3227454442640408640 {"field3":"%64,B+>H{7Ao0R{'\\o _'Pe8^3938'Qu:\"p(A?-6 #@i;Gm)_?)567;t\";|+(v&_504<$M<=0%4n\"4l2.6.Qw>Jc9Ko&Eu\">. "}
+transaction terminates, start Paxos
+read
+Most recent data of user3700135223015055263 is null
+transaction terminates, start Paxos
+Most recent data of user4192898967708895389 is null
+transaction terminates, start Paxos
+Most recent data of user8039170344728911868 is null
+transaction terminates, start Paxos
+read
+Most recent data of user5214507898285358882 is null
+transaction terminates, start Paxos
+update user7461223496605049899 {"field5":"4R#4Lw2D\/4]?&Ns2G39Kc#V-*6>1_!94<,B{;<`&.l)7v304?16,1.%0(%A9#^{?.\".2f?!&0?$,U=7De>O->Dq7Ec4J%<>`7 d#"}
+transaction terminates, start Paxos
+read
+read
+update user6757120995747725269 {"field2":",=&92$2=r>Rm=&p?Bi#: !# 8>x.(.?\/f;_?.,v#&r>% -B%0C30W+ \/j#I5!8 <\/4-8z&L{4. $J9*%(%..2L140\"-T5<<*#Pa>"}
+transaction terminates, start Paxos
+Most recent data of user8044416487260319997 is null
+transaction terminates, start Paxos
+update user5001830905879751599 {"field2":"(_{+&|;Dm>*~>Tw+@9\"#8,Wq*Z!9Aq6N39;h>D'%Zo.K\/=T-?:v*M;>@c;;`586)C#\"8b'?,<K{+Y3<$. [k\/#z:\"8914(0*'1 !"}
+transaction terminates, start Paxos
+Most recent data of user1945405093659222041 is null
+transaction terminates, start Paxos
+update user392299711134039396 {"field3":"1;b\/Gu)Sm\/!&%98(W{316=Y';<x.Ta\".`2Qk:-6%8$2Ua>3x\"V!0Ye27j&*`0-z:,p.;,0=6%'&9Z=,,($B+.Ks:?$0X99B' Se3"}
+transaction terminates, start Paxos
+Most recent data of user899463647179981130 is null
+transaction terminates, start Paxos
+read
+Most recent data of user5570965350477218654 is null
+transaction terminates, start Paxos
+Most recent data of user899463647179981130 is null
+transaction terminates, start Paxos
+read
+update user6395075755730158803 {"field0":"0't3 \"#&8=(t%H{+\\&+p&+~(W7)\/0\/2x>Y#,Ue7;6+9l&(>-=88Re&520\\+\"K+4]5#=d2<l(O+=1$=*.%Om##&<[u)^)((`.#~#"}
+transaction terminates, start Paxos
+Most recent data of user2428236513802386357 is null
+transaction terminates, start Paxos
+read
+Most recent data of user1950091275678489722 is null
+transaction terminates, start Paxos
+update user4525365549292276308 {"field8":"-#n\/=f9Qu+Z!9!49<6?E) 78$(>( &>[k*)2-'d37,-Ag'[3)<, Ly<9><Bi-I'9#&,4v:Si#Gg'M;=Wg69>:U)1.f$X917v),(-"}
+transaction terminates, start Paxos
+Most recent data of user658327917364469196 is null
+transaction terminates, start Paxos
+update user1941278872152094808 {"field3":"0@k638*G304n-Vq#Vw\/R}\"]e8]#-\/(9Oy6I9%By60$=Uc\/M<T3<B(748$\":Z\/4W{07:4Uw&.*!8j +b&Q';Z9!Ny)Iu?Nw)$b>"}
+transaction terminates, start Paxos
+Most recent data of user7923630307134722147 is null
+transaction terminates, start Paxos
+read
+Most recent data of user8170012179481642210 is null
+transaction terminates, start Paxos
+read
+Most recent data of user8502137115770724564 is null
+transaction terminates, start Paxos
+Most recent data of user2413058046720302418 is null
+transaction terminates, start Paxos
+read
+update user6395075755730158803 {"field9":"%Cy\"7l?+ (V\/'=~:#p=3p'E'35z62|#)d2(v!Ly#Qe+Pu',b!%\"1N;.^5)&v*L{?Ry0'd#Bw6^51%0+@q;9p<',,**#*r>0<3Z%="}
+transaction terminates, start Paxos
+Most recent data of user4298288365534567417 is null
+transaction terminates, start Paxos
+read
+Most recent data of user4756227309262813867 is null
+transaction terminates, start Paxos
+update user4520337721978710062 {"field0":"-+z:M7&%21Vm<%t#Qs1$<5_i18v:%l>,&<)t N#)&z'Qi2]s0.>$\\o,^}3Q'&X#$Qs0\/r6$*;5f7Z)0H+ A?3C{;-<\/#r.I0L?0"}
+transaction terminates, start Paxos
+Most recent data of user4404237723872379893 is null
+transaction terminates, start Paxos
+read
+Most recent data of user4404797684384520341 is null
+transaction terminates, start Paxos
+update user4862176667600626343 {"field8":"(828\"<9Y3--<$2l#Z'>Ce'X'9T+%Lg\">p;*h*1x\/B3>G3-7`;_'<(b*_{.M+#\/ )!>::p2_;\/4`6B3!3\")Jg-)f?F=?^18..:%|>"}
+transaction terminates, start Paxos
+Most recent data of user7456755629803624101 is null
+transaction terminates, start Paxos
+read
+Most recent data of user4881823001484136080 is null
+transaction terminates, start Paxos
+read
+Most recent data of user7089245932036807623 is null
+transaction terminates, start Paxos
+read
+Most recent data of user3695449040995787582 is null
+transaction terminates, start Paxos
+Most recent data of user7109110581138159243 is null
+transaction terminates, start Paxos
+Most recent data of user6762585453496975281 is null
+transaction terminates, start Paxos
+update user7577105179493538185 {"field2":"34v*Fi150,Qc\"Em.N!0&\"==&(<v?My(U%=<>\/6r\/S=#Xw?T?8G?V}%8&=@!0<&9Y)26r:T+:\/.(3b.Qe.Q5=+\"-=p54f7W-2,>!"}
+transaction terminates, start Paxos
+read
+update user4298288365534567417 {"field2":".[10M-3$8<X+,X+,Ve.[5<&0!Vy\"(f;,v6527:r>$r4:&0!r0I-(!~\/4b\/]740h&Am2Dc:Qo*0 1:|1'b32n,,:(6v%\">=0>5N}6"}
+transaction terminates, start Paxos
+Most recent data of user3604678149740059045 is null
+transaction terminates, start Paxos
+read
+Most recent data of user1583919814153796023 is null
+transaction terminates, start Paxos
+read
+Most recent data of user5827061232156972644 is null
+transaction terminates, start Paxos
+update user3936243125517000951 {"field4":">Jm?@g>Dc\",v1@%96p,X\/=)b<Zk> 8+9`>Eg:R*C}$)p?>l(&h#^&'r#9(3#,0L5-\/(,.r*^w3To4Ii;Is6\/`'O+=?&=\/4=Ny;"}
+transaction terminates, start Paxos
+Most recent data of user5475289961984380553 is null
+transaction terminates, start Paxos
+Most recent data of user6858042526771971499 is null
+transaction terminates, start Paxos
+read
+update user6163872350465322679 {"field8":":1 0Uy4?p>!l Zy\"Ua)K?-Pa'S#-Pc,Gu7,d:7x6As;3t#&l512!.x7Sy'!d$(b680>)f+T7<8f.\/>+\"088h\"R+<-v\/L5),b<7, "}
+transaction terminates, start Paxos
+Most recent data of user2639575269965870861 is null
+transaction terminates, start Paxos
+update user6033932121519031350 {"field8":"#,t\/<z5C7(V!%- <W*7`31d17,5=$\"_\/<%(4^7 $`?T7=<<.Sk;O{%Sm*B;'+l\/+t  p>.l944%_{-'v*T9 n#[c#Qk\/8>\";~>"}
+transaction terminates, start Paxos
+Most recent data of user402013720466873323 is null
+transaction terminates, start Paxos
+read
+Most recent data of user6761807177766992950 is null
+transaction terminates, start Paxos
+read
+Most recent data of user7456195669291483653 is null
+transaction terminates, start Paxos
+update user7692645217087727906 {"field6":")1l#\\+)'29]\/>Kc>T}1Ws2Cu5R\/4?n0]q6Ti=Rg#5n>>\",>`,X{\/Q3,n\/Es\"3t\/2*2P;(Fe31|'\"j&Bs>\\\/<O{7,z<9.568*4.0"}
+transaction terminates, start Paxos
+Most recent data of user5585365541829320262 is null
+transaction terminates, start Paxos
+update user5364654421627300396 {"field6":"6?l'#n<Ma7J;$J%)Ey'Yc;^'<M?)J-51810,,Qg6\\!.28)\"z $r'089Z30) %,<,=61Eu*&4\"Jo\/(v(Aq:4(?(88O;05.$S5\/Cc3"}
+transaction terminates, start Paxos
+Most recent data of user1453419624695364246 is null
+transaction terminates, start Paxos
+Most recent data of user8637665132542722587 is null
+transaction terminates, start Paxos
+read
+update user5238840414188136300 {"field8":").t\/+*!?|6Z%:Mi;38\"4*!,2\"Ka.Ak,Zy2E?!Io3\\-\/Lu.R;.\"!Mg=\\o*#p4%~*Ja\/Ho>F%W#9B5?_;0$p)A59Ty:Hs+7h1,|3"}
+transaction terminates, start Paxos
+Most recent data of user643367765500227140 is null
+transaction terminates, start Paxos
+read
+Most recent data of user9210925798647316875 is null
+transaction terminates, start Paxos
+read
+Most recent data of user3242974555016791144 is null
+transaction terminates, start Paxos
+read
+Most recent data of user899463647179981130 is {"field9":""}
+transaction terminates, start Paxos
+read
+Most recent data of user6520889763169322899 is null
+transaction terminates, start Paxos
+read
+Most recent data of user2754896992342218699 is null
+transaction terminates, start Paxos
+read
+Most recent data of user8029797980690376506 is null
+transaction terminates, start Paxos
+read
+Most recent data of user4997704684372624366 is null
+transaction terminates, start Paxos
+update user6159186168446054998 {"field3":"0B}\/# !>j;Ki7;`.P5Wi*I32K;%Ww+T-%P-1(&8R{:Uw\/B)<\/ <X):@{6Ms*Ii7*t=(*0?4!H)!-,(6 0'<80,<.\"8(v\"Bs;'84"}
+transaction terminates, start Paxos
+Most recent data of user5821815089625564515 is null
+transaction terminates, start Paxos
+read
+Most recent data of user4530051731311543989 is null
+transaction terminates, start Paxos
+read
+Most recent data of user1935472769108546231 is null
+transaction terminates, start Paxos
+read
+Most recent data of user1718887870413653598 is null
+transaction terminates, start Paxos
+update user1453419624695364246 {"field8":".-.(:r9P?=Be1X\/8Xw,\/j&C%2:*4^y6L-58~8*h+S,M- 1x(16![?+)`>-l$&80=0.Qy#-x(Oo3L5)[),!.2(t\"Ke;]50\\o6S%="}
+transaction terminates, start Paxos
+Most recent data of user4298288365534567417 is null
+transaction terminates, start Paxos
+update user3700353538232897146 {"field0":"=Pe\"Xe+6r:X9)4t7Ok* l;Z870!'8(*40<4#_g+'8;@k>@3,Ca.0l6F%%9j?0$5Ka9Zo:Eo=9n\"V;*D+0X;\/<\"5Pc4^i342-8v#"}
+transaction terminates, start Paxos
+Most recent data of user55488592825689361 is null
+transaction terminates, start Paxos
+read
+Most recent data of user8064062821143829734 is null
+transaction terminates, start Paxos
+Most recent data of user4770627500614915475 is null
+transaction terminates, start Paxos
+update user6168900177778888925 {"field7":"\"<~2Uc&^! B! 4f7-4>!\"1Ci!&b7]%![?(Mc#\"j>B)3Nm2Ee&Je\"[q9. 48x>92(!(1-l3 ~3N9 \\!>=>$@i1<.<*|(Hi*[e-A+4"}
+transaction terminates, start Paxos
+read
+Most recent data of user4520119406760868179 is null
+transaction terminates, start Paxos
+update user171028630419879082 {"field8":"0?,9^e\/H'8Hk72p\/T51_')0\"\"7:-9z '2=Ee&)h#Q'5Z?9X=4Pa\/?$\";d>Hq4>~;\/,4%4$&8=^\/(\\#5)h&D9]g&9<2]w>]e6Xm3"}
+transaction terminates, start Paxos
+Most recent data of user2754896992342218699 is null
+transaction terminates, start Paxos
+update user3469150132968061022 {"field5":"0Vu'Ie124,Dy'X'14v? \",^9.Ac?@5)Hi>D#\".. #~.'\"(]5?\"`3\/d85,4Tg<[c\"-<10.5E+!&(-<`!3|\"P30h#P#+; 8Bi3T38"}
+transaction terminates, start Paxos
+Most recent data of user1251794877864713669 is null
+transaction terminates, start Paxos
+read
+Most recent data of user6168900177778888925 is null
+transaction terminates, start Paxos
+update user4972812207957706500 {"field5":"=).%<|-Ca\/Tg6P'5)29T#)Je3^c&6v(3r?L{7]%,*h,E%4%|%(8%R'8]g:\">=J9=7f'V35^!38b2[e\"*`\/[m4]\/8W%:Tw?9b&R%,"}
+transaction terminates, start Paxos
+Most recent data of user9110004267623070645 is null
+transaction terminates, start Paxos
+update user3122406690109035177 {"field7":"=Vs?9:1_:V}7%v?N'((.%@5%4v+X!%T+)I13;\"-)n!%b;\\e8S!0Lk4'`#3<48h'+|!B?1Li;D6$n2'|&R7) p'E97L!)\">.=z3"}
+transaction terminates, start Paxos
+Most recent data of user2755675268072201030 is null
+transaction terminates, start Paxos
+update user1472505998066733535 {"field4":";[9<[g U'01j312(Xa,18=Ta6;r*-`+V?,U516h\"%b$+69K>!d.Je<V?$.p4@a>2h(J5,Jo8W9,P}5<t2L)9Ac3,$8Ng:No;9h."}
+transaction terminates, start Paxos
+Most recent data of user5002390866391892047 is null
+transaction terminates, start Paxos
+read
+Most recent data of user899463647179981130 is {"field9":""}
+transaction terminates, start Paxos
+read
+Most recent data of user3956449419912651136 is null
+transaction terminates, start Paxos
+update user3719999872116406883 {"field6":"9*:9#|.U>G1;384!84;|38.+Jg368(T?(J+2&x\/2n-1$!0<;\\#$Y{(H3 3(9,>8Kk%;|\/@w6B3-H=*We\":(&Cg\/Nc=,l>]q\/) $"}
+transaction terminates, start Paxos
+Most recent data of user6501025114067971279 is null
+transaction terminates, start Paxos
+update user4756568954557112432 {"field7":"?6\"86(?Hi\"&:*D)<=>%X?%Tw1^a.2t%%*1\/015f+82$^o;Y=$*`7't.74(D&0b:Pq>%\"$,v14f?^=*@y3F+*:v?>t-Zi'M{ 524"}
+transaction terminates, start Paxos
+Most recent data of user2186540823474733975 is null
+transaction terminates, start Paxos
+update user4409702181621629905 {"field3":"=%,(^m.#p?R-?P7%^i,P91@%<W}+?\"69l.+<8W{?\\\/9>21>,1<f*8n*=p.Ds ^{>Mi6C!5*: 2(- t*^)(D\/!$`&E38=p'Q3)Ra>"}
+transaction terminates, start Paxos
+Most recent data of user9221418083710133133 is null
+transaction terminates, start Paxos
+update user7456755629803624101 {"field7":"#9.=?48-|\/G}1@w&P7#'d6Iy;\/*($n2_?5Mm<Wi:Da-!l*+>4Ve6*2!8*$5j5:.8Y}4%,82 6?n+0<5Lc+8*596%Jk'Yu\"1h6%p'"}
+transaction terminates, start Paxos
+Most recent data of user2056040634016302198 is null
+transaction terminates, start Paxos
+read
+Most recent data of user2292708497030388334 is null
+transaction terminates, start Paxos
+read
+Most recent data of user6294714185218053021 is null
+transaction terminates, start Paxos
+read
+Most recent data of user6646485455390645112 is null
+transaction terminates, start Paxos
+read
+Most recent data of user879817313296471393 is null
+transaction terminates, start Paxos
+update user6188764826880240545 {"field8":"?+n2&l<3>0&l7B7$'(\/,4=;:(&n*(h$N;<L=7#h7:(79d?*d.\/l+He?.*$Kq3&~\",6,?> W'9^3'r*&25Pe7D1)M70;*!Mw'7:1"}
+transaction terminates, start Paxos
+Most recent data of user3565167166755197688 is null
+transaction terminates, start Paxos
+update user899463647179981130 {"field4":"6\\?8Co Bu#F},H'$Ky#$>%\\i #~+&~1&:,*4<2b+_;6$h&Y'26(-!$7=h&6l6\/,-Tw?Zo68<\/2j2<(0J;9Im9Uq:V30Hy3-z40,("}
+transaction terminates, start Paxos
+Most recent data of user8747959027605504179 is null
+transaction terminates, start Paxos
+read
+Most recent data of user6038618303538299031 is null
+transaction terminates, start Paxos
+update user3921624618947057460 {"field6":"8[q&9$\/7  Oa74n\"8z$&l.!6,Fi7 x*J-4W%6Zk6.r#1f\/Xy*Eg. j;Q9=<r3Mq*Cs!Us'3h%Bk29:10v#>6#Zs.720[s3H;2X!0"}
+transaction terminates, start Paxos
+Most recent data of user3695449040995787582 is null
+transaction terminates, start Paxos
+update user1583359853641655575 {"field8":" &<8#*',2)\\979d7J?7Tu6+&)' <@9)Q-80v278)Y{&*  V53~.N-186,Da,\/ !-d<E7(;d4B;()\">94%!*35<)1:;$:4=,&^y2"}
+transaction terminates, start Paxos
+Most recent data of user7682152932024911648 is null
+transaction terminates, start Paxos
+update user3831195372985627488 {"field6":"<8*$P3,*. _m4Cq\/W9>,t&O?,2 %O+We#B{=[1 Z\/76f&\\a(Eq\"M13Yw>@s,Z;!(b<+4<N3\/K#,7:&9&<4b8]50P1\/'.)Ci\/G\/!"}
+transaction terminates, start Paxos
+Most recent data of user4997704684372624366 is null
+transaction terminates, start Paxos
+read
+Most recent data of user4866862849619894024 is null
+transaction terminates, start Paxos
+read
+Most recent data of user3575099491305873498 is null
+transaction terminates, start Paxos
+update user9210925798647316875 {"field0":"?\"j&1,.4h\"<\"71t2Q}-J};(4>,2<W\/ V3Ig:[*Gy2:\"5M1+9~&Y+$' -\\;;7h&681;<1Ko+[a\".,:B342n:.*4De2R!-P;0R3"}
+transaction terminates, start Paxos
+Most recent data of user3227454442640408640 is null
+transaction terminates, start Paxos
+update user3690421213682221336 {"field2":"2Di*-n+Ns\";b Hm;Pa$\"6)$$7P-,X;.Mk\/[5(5`\/Ho\/*,%1t92 $C{6Ha+7p=)*9F}$$,,Aa7Vk'.<\"%z:^k=C{'P;.W#8E?;)6 "}
+transaction terminates, start Paxos
+read
+read
+update user5465015992139406178 {"field0":"6Pc2D?3)j6>v.1l;9p6%t3Ls5!\" 4.8Jm>Z33'n'\\a9.\"=;r! z7Kw=&$-2\";>:9+n*#>0S-+-n:^3!R\/-9n+W\/03*+4 1\/d2Pq+"}
+transaction terminates, start Paxos
+Most recent data of user7350587956247969742 is null
+transaction terminates, start Paxos
+read
+read
+update user8048884354061745795 {"field5":"!F!02b2-<1;f<Zw.#r2Yc2Xe-@! K5 Eg><t5L75Ai8S= ,|,<04S=*R?$8x>B!8-$-_g> ><'|>%n>Ge>6*?@a\"X!1T7=6l9J5-"}
+transaction terminates, start Paxos
+Most recent data of user2639233624671572296 is null
+transaction terminates, start Paxos
+update user1925758759775712304 {"field1":".*x\/,*\"! ()6=J=<X! #z\"G;#n\"< ;D5)98(04!$b\/\"b>2>(D30%$![%4Ka=X785z+*`\/9b![e6>(:%r*Q#0t.I+5A+9>l6Lc>"}
+transaction terminates, start Paxos
+Most recent data of user4177720500626811450 is null
+transaction terminates, start Paxos
+read
+Most recent data of user64860956864224723 is null
+transaction terminates, start Paxos
+update user1593633823486629950 {"field5":"$,$!Ba(%.0:$ Ry+&|\/<z??\"9Rs; <3:f2Hm6@!9:0,S)=%6\/^'5\"p%>j;^k9<~\"0(,Dk?R5)'2!<v-8*!Hw=Zw:>4840$3t(@q'"}
+transaction terminates, start Paxos
+update user398105814177587973 {"field4":")$b7Dq5Aw&N'-^a:D{(H#,N+>Y)(Yk$X=5Uu;5<$[3$!d\"1n'<h'%t 3x74(!Aa;Yq;;n2$8.I5-?0,J?8(+5(0?v?!(%F1+P&"}
+transaction terminates, start Paxos
+Most recent data of user6636771446057811185 is null
+transaction terminates, start Paxos
+update user3831195372985627488 {"field3":"%0>8:&0N}?:b'U)4@5(P#=O}\"(2,_c8%d;X{0+t.+z=Fw2,v-Z3$ f\"G}&Ai0[e.? ?]\/%:p\"\/01L)!Vu*!b#:><=&(\"r'S;=#p&"}
+transaction terminates, start Paxos
+update user6038618303538299031 {"field8":"-T90\/t)?d*S9\/^)$Xy6.:!Zq8T+-D7?W9,8\"\"Fe+$&5+l>>f\/L98Wc+Nm.*:3]3 ^-\"* <&b=.80U7>Q+,2*:;|3[=>\\i#]g\/\\e&"}
+transaction terminates, start Paxos
+Client a6000a8b-c31f-43aa-94b4-3efd70cb0874 successfully commits f86e33e7-be37-450b-8ecc-f80116da1ae4.
+update user7114138408451725489 {"field6":":Du.B;\"'n:^{(;$-D-)5`'!8+)>([y:Fi>'t,]c3(('_y.;( Ri7E\/']#(<8$,b>Ie)Sc2Dm=Oo?>n3^e;Vu;7,!0l3&`7,l3K)!"}
+transaction terminates, start Paxos
+Client 79fe097b-cde3-4602-98f1-ef8733ca1ade successfully commits 4a3ce0e7-ae91-47b4-aa29-a6a4223aff48.
+read
+Most recent data of user3016457331771222701 is null
+transaction terminates, start Paxos
+update user6400321898261566932 {"field8":"2D#5Ka:'&57~76* Fc3]==5d!S+<&~=,:,Eo9Sm7X-5[}.Ow\"=x;_'-3p.:4 H#$'|4Rc7[-7:t?W}5#:$Z%?S\/99<'0>,Uc8#84"}
+transaction terminates, start Paxos
+Client f65c808b-819f-4ab1-b79e-d8376f23d2b1 successfully commits c41ba7b3-b8a5-40a7-9f32-3f08fef70dbb.
+update user5561033025926542844 {"field8":"*^k6)6\/2d&G?)<<-9$.D5<\"<,_'So7T#%Cm)!v.!l,(,)+l$=48)>?Jy'Ga(C+$M\/.=88M#M!0:v'3~.1x6^!1Ca3\"v.#<>D3%"}
+transaction terminates, start Paxos
+Client 514df4b2-c792-4fad-8621-78112bb4b665 successfully commits 2002382f-2b23-4d80-b5e0-e675a4a2d615.
+read
+Most recent data of user899463647179981130 is {"field4":""}
+transaction terminates, start Paxos
+read
+Most recent data of user8164424391655935516 is null
+transaction terminates, start Paxos
+update user3222768260621140959 {"field6":"(#n>H=03r\"66=\"|*Oq+(t&Dk+Q' 5l0#t;, ;Fg;\"z=02(V\/0\/$<Eo>;~63d#0z'E?2)< V7 j\"9r:M58:.>+\"$_!=9.%@;\"Tu:"}
+transaction terminates, start Paxos
+Client 2fdac891-7adb-49b7-a850-faa6b7a8172b successfully commits 075fb699-c224-4256-9fa9-c1d0774aa659.
+update user4992458541841216237 {"field1":"558(F7<0z&^=:So'W-+48 W#%Qy.Hs4]-8!&!Vg>:2 4*<Bi0Ts3Ni&Oy\/Q-2.,==|09*-Tk4#j?.2\")b*<p7W?:>6U)%Sw40t#"}
+transaction terminates, start Paxos
+Client 06e35e9a-ac81-49cc-8b69-80d1ca972a4f successfully commits 476cecf6-54c1-4d65-97ee-c8f0a54a977e.
+read
+Client 09d740c1-97cf-4d59-8c4e-7fd9af33f756 successfully commits 02724b33-5440-4ad8-bb77-0889870d7e11.
+update user869884988745795583 {"field8":".&> !<$84<\/0<+<$7t4O#-)n*Ws\"%t+)n3[g\"N+1' :Sy&:<:9v;*`60l6R{.F!5< 2M#1Z;\"7*0Lq2:j7-('=20Xu#J=< h3O?-"}
+transaction terminates, start Paxos
