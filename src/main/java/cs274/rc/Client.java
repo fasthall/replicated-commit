@@ -80,7 +80,7 @@ public class Client {
 			Operation operation = transaction.popOperation();
 			if (operation == null) {
 				// transaction terminates, start Paxos
-				System.out.println("transaction terminates, start Paxos");
+				Logger.info("transaction terminates, start Paxos");
 				result = sendPaxosRequest(transaction, writeBuffer);
 				break;
 			} else if (operation.getAction() == Operation.READ) {
@@ -127,21 +127,23 @@ public class Client {
 				} else if (json.getInt("action") == Communication.READ_REJECT) {
 					readingPool.addReject();
 				}
+			} else {
+//				channel.basicPublish("", replyQueue, delivery.getProperties(), delivery.getBody());
 			}
 		}
 		if (readingPool.getSize() <= replicas.size() / 2) {
 			result = false;
-			System.out.println("Read " + operation.getKey() + " aborts.");
+			Logger.info("Read " + operation.getKey() + " aborts.");
 		} else {
 			String value = readingPool.getMostRecentValue();
-			System.out.println("Most recent data of " + operation.getKey() + " is " + value);
+			Logger.info("Most recent data of " + operation.getKey() + " is " + value);
 		}
 		readingPool = null;
 		return result;
 	}
 
-	private boolean sendPaxosRequest(Transaction transaction, List<Operation> writeBuffer)
-			throws JSONException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
+	private boolean sendPaxosRequest(Transaction transaction, List<Operation> writeBuffer) throws JSONException,
+			ShutdownSignalException, ConsumerCancelledException, InterruptedException, IOException {
 		PaxosPool paxosPool = new PaxosPool(transaction.getName());
 		JSONObject paxosJson = new JSONObject();
 		paxosJson.put("action", Communication.PAXOS_REQUEST);
@@ -157,6 +159,11 @@ public class Client {
 					paxosJson.toString().getBytes());
 		}
 
+		// non-write commit
+		if (writeBuffer.isEmpty()) {
+			return true;
+		}
+
 		while (paxosPool.getAcceptCount() + paxosPool.getRejectCount() < coordinators.size()
 				|| paxosPool.getAcceptCount() <= coordinators.size() / 2) {
 			// wait for majority
@@ -168,17 +175,19 @@ public class Client {
 				} else if (json.getInt("action") == Communication.PAXOS_REJECT) {
 					paxosPool.addReject();
 				}
+			} else {
+//				channel.basicPublish("", replyQueue, delivery.getProperties(), delivery.getBody());
 			}
 		}
 
 		boolean result;
 		if (paxosPool.getAcceptCount() > coordinators.size() / 2) {
 			// commit success from client's view
-			System.out.println("Client " + name + " successfully commits " + transaction.getName() + ".");
+			Logger.info("Client " + name + " successfully commits " + transaction.getName() + ".");
 			result = true;
 		} else {
 			// abort
-			System.out.println("Not enough accepts, abort.");
+			Logger.info("Not enough accepts, abort.");
 			result = false;
 		}
 		return result;

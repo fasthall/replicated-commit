@@ -145,6 +145,7 @@ public class Server extends Thread {
 			int action = json.getInt("action");
 			String corrID = delivery.getProperties().getCorrelationId();
 			String replyTo = delivery.getProperties().getReplyTo();
+			Logger.info("Server " + name + " received " + json.toString());
 			switch (action) {
 			case Communication.PAXOS_REQUEST:
 				handlePaxosRequest(new JSONArray(json.getString("buffer")), json.getString("transaction"),
@@ -231,7 +232,7 @@ public class Server extends Thread {
 			BasicProperties replyProps = new BasicProperties.Builder().correlationId(corrID).build();
 			delayedPublish("client", "", replyTo, replyProps, json.toString().getBytes());
 		} else {
-			System.out.println("Cannot set " + key + " for " + transaction);
+			Logger.info("Cannot set " + key + " for " + transaction);
 			// can't acquire the lock
 			JSONObject json = new JSONObject();
 			json.put("action", Communication.READ_REJECT);
@@ -254,7 +255,7 @@ public class Server extends Thread {
 		String tpcCorrID = UUID.randomUUID().toString();
 		BasicProperties props = new BasicProperties.Builder().correlationId(tpcCorrID).replyTo(replyQueue).build();
 		// intra DC
-		delayedPublish("", shardExchange, "", props, tpcJson.toString().getBytes());
+		delayedPublish("intra", shardExchange, "", props, tpcJson.toString().getBytes());
 		if (handle2PCPrepareSelf(writeBuffer, transaction)) {
 			tpcPool.addAccept();
 		} else {
@@ -271,6 +272,8 @@ public class Server extends Thread {
 				} else if (json.getInt("action") == Communication.TPC_REJECT) {
 					tpcPool.addReject();
 				}
+			} else {
+				channel.basicPublish("", replyQueue, delivery.getProperties(), delivery.getBody());
 			}
 		}
 
@@ -308,9 +311,12 @@ public class Server extends Thread {
 				} else if (action == Communication.PAXOS_REJECT) {
 					paxosPool.addReject();
 				}
+			} else {
+				channel.basicPublish(Communication.EXCHANGE_COORDINATORS, name, delivery.getProperties(),
+						delivery.getBody());
 			}
 		}
-		System.out.println("Server " + name + " received from majority, start 2PC commit.");
+		Logger.info("Server " + name + " received from majority, start 2PC commit.");
 
 		/*
 		 * Send 2PC commit. cohorts who receive this should log commit and
@@ -322,7 +328,7 @@ public class Server extends Thread {
 			json.put("version", version);
 			json.put("transaction", transaction);
 			// intra DC
-			delayedPublish("", shardExchange, "", null, json.toString().getBytes());
+			delayedPublish("intra", shardExchange, "", null, json.toString().getBytes());
 
 			handle2PCCommit(version, transaction);
 		}
@@ -348,18 +354,19 @@ public class Server extends Thread {
 			}
 			lockManager.unlockAllExclusiveByTransaction(transaction);
 			abstractLog.put(logEntry);
-			System.out.println("Server " + name + " locks: log 2PC prepare.");
+			Logger.info("Server " + name + " locks: log 2PC prepare.");
 			JSONObject json = new JSONObject();
 			json.put("action", Communication.TPC_ACCEPT);
 			BasicProperties props = new BasicProperties.Builder().correlationId(corrID).build();
-			delayedPublish("", "", replyTo, props, json.toString().getBytes());
+			// intra DC
+			delayedPublish("intra", "", replyTo, props, json.toString().getBytes());
 		} else {
 			lockManager.unlockAllExclusiveByTransaction(transaction);
 			JSONObject json = new JSONObject();
 			json.put("action", Communication.TPC_REJECT);
 			BasicProperties props = new BasicProperties.Builder().correlationId(corrID).build();
 			// intra DC
-			delayedPublish("", "", replyTo, props, json.toString().getBytes());
+			delayedPublish("intra", "", replyTo, props, json.toString().getBytes());
 		}
 	}
 
@@ -382,7 +389,7 @@ public class Server extends Thread {
 			}
 			lockManager.unlockAllExclusiveByTransaction(transaction);
 			abstractLog.put(logEntry);
-			System.out.println("Server " + name + " locks: log 2PC prepare.");
+			Logger.info("Server " + name + " locks: log 2PC prepare.");
 			return true;
 		} else {
 			lockManager.unlockAllExclusiveByTransaction(transaction);
@@ -393,7 +400,7 @@ public class Server extends Thread {
 	private void handle2PCCommit(long version, String transaction) {
 		abstractLog.commit(version, transaction);
 		lockManager.unlockAllExclusiveByTransaction(transaction);
-		System.out.println("Server " + name + " committed locally and released the locks.");
+		Logger.info("Server " + name + " committed locally and released the locks.");
 	}
 
 	public void delayedPublish(String to, final String exchange, final String routing, final BasicProperties props,

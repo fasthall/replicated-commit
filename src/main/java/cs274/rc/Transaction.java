@@ -11,14 +11,12 @@ import java.util.UUID;
 public class Transaction {
 
 	private String name;
-	private long voteID;
 	private List<Operation> list;
 	private List<String> readSet;
 	private List<String> writeSet;
 
 	public Transaction() {
 		this.name = UUID.randomUUID().toString();
-		this.voteID = System.currentTimeMillis();
 		list = new ArrayList<Operation>();
 		readSet = new ArrayList<String>();
 		writeSet = new ArrayList<String>();
@@ -26,7 +24,6 @@ public class Transaction {
 
 	public Transaction(String name) {
 		this.name = name;
-		this.voteID = System.currentTimeMillis();
 		list = new ArrayList<Operation>();
 		readSet = new ArrayList<String>();
 		writeSet = new ArrayList<String>();
@@ -65,14 +62,6 @@ public class Transaction {
 
 	public List<String> getWriteSet() {
 		return writeSet;
-	}
-
-	public long getVoteID() {
-		return voteID;
-	}
-
-	public void setVoteID(long voteID) {
-		this.voteID = voteID;
 	}
 
 }

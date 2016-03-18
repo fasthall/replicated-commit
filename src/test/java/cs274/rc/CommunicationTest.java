@@ -85,6 +85,23 @@ public class CommunicationTest extends TestCase {
 				++App.abort;
 			}
 		}
+		Transaction t1 = new Transaction();
+		t1.addReadOperation("X");
+		client1.put(t1);
+//		Thread.sleep(50);
+		System.out.println();
+
+		Transaction t2= new Transaction();
+		t2.addReadOperation("X");
+		client1.put(t2);
+//		Thread.sleep(50);
+		System.out.println();
+
+		Transaction t3 = new Transaction();
+		t3.addWriteOperation("X", "TEST");
+		client1.put(t3);
+		
+		
 		System.out.println("commit " + App.commit);
 		System.out.println("abort " + App.abort);
 		System.out.println(App.err4Str);
