@@ -75,7 +75,7 @@ public class CommunicationTest extends TestCase {
 		client1.addOneWayLatency("DC3_1", 60);
 		client1.addOneWayLatency("DC3_2", 60);
 		Thread.sleep(50);
-		for (int i = 0; i < 100; ++i) {
+		for (int i = 0; i < 10; ++i) {
 			Transaction t1 = new Transaction();
 			t1.addWriteOperation("X", "v" + i);
 			t1.addReadOperation("X");

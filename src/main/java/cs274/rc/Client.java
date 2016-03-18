@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -45,8 +46,7 @@ public class Client {
 		try {
 			Connection connection = factory.newConnection();
 			channel = connection.createChannel();
-			channel.exchangeDeclare(Communication.EXCHANGE_COORDINATORS,
-					"direct");
+			channel.exchangeDeclare(Communication.EXCHANGE_COORDINATORS, "direct");
 			channel.exchangeDeclare(Communication.EXCHANGE_REPLICAS, "direct");
 			queueingConsumer = new QueueingConsumer(channel);
 			replyQueue = channel.queueDeclare().getQueue();
@@ -72,9 +72,8 @@ public class Client {
 		oneWayLatency.put(to, latency);
 	}
 
-	public boolean put(Transaction transaction) throws UnknownHostException,
-			IOException, ShutdownSignalException, ConsumerCancelledException,
-			JSONException, InterruptedException {
+	public boolean put(Transaction transaction) throws UnknownHostException, IOException, ShutdownSignalException,
+			ConsumerCancelledException, JSONException, InterruptedException {
 		boolean result = false;
 		List<Operation> writeBuffer = new ArrayList<Operation>();
 		while (true) {
@@ -99,12 +98,10 @@ public class Client {
 		return result;
 	}
 
-	private boolean sendReadRequest(Transaction transaction, Operation operation)
-			throws UnknownHostException, IOException, ShutdownSignalException,
-			ConsumerCancelledException, InterruptedException, JSONException {
+	private boolean sendReadRequest(Transaction transaction, Operation operation) throws UnknownHostException,
+			IOException, ShutdownSignalException, ConsumerCancelledException, InterruptedException, JSONException {
 		boolean result = true;
-		ReadingPool readingPool = new ReadingPool(transaction.getName(),
-				operation.getKey());
+		ReadingPool readingPool = new ReadingPool(transaction.getName(), operation.getKey());
 		final JSONObject readJson = new JSONObject();
 		readJson.put("action", Communication.READ_REQUEST);
 		readJson.put("transaction", transaction.getName());
@@ -112,16 +109,13 @@ public class Client {
 
 		// Send read request to all replicas
 		String corrID = UUID.randomUUID().toString();
-		final BasicProperties props = new BasicProperties.Builder()
-				.correlationId(corrID).replyTo(replyQueue).build();
+		final BasicProperties props = new BasicProperties.Builder().correlationId(corrID).replyTo(replyQueue).build();
 		for (String replica : replicas) {
-			delayedPublish(replica, Communication.EXCHANGE_REPLICAS, replica,
-					props, readJson.toString().getBytes());
+			delayedPublish(replica, Communication.EXCHANGE_REPLICAS, replica, props, readJson.toString().getBytes());
 		}
 
 		while (readingPool.getSize() <= replicas.size() / 2
-				&& readingPool.getSize() + readingPool.getReject() < replicas
-						.size()) {
+				&& readingPool.getSize() + readingPool.getReject() < replicas.size()) {
 			// Waiting data from majority
 			Delivery delivery = queueingConsumer.nextDelivery();
 			if (delivery.getProperties().getCorrelationId().equals(corrID)) {
@@ -140,35 +134,30 @@ public class Client {
 			System.out.println("Read " + operation.getKey() + " aborts.");
 		} else {
 			String value = readingPool.getMostRecentValue();
-			System.out.println("Most recent data of " + operation.getKey()
-					+ " is " + value);
+			System.out.println("Most recent data of " + operation.getKey() + " is " + value);
 		}
 		readingPool = null;
 		return result;
 	}
 
-	private boolean sendPaxosRequest(Transaction transaction,
-			List<Operation> writeBuffer) throws UnknownHostException,
-			IOException, JSONException, ShutdownSignalException,
-			ConsumerCancelledException, InterruptedException {
+	private boolean sendPaxosRequest(Transaction transaction, List<Operation> writeBuffer)
+			throws JSONException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
 		PaxosPool paxosPool = new PaxosPool(transaction.getName());
 		JSONObject paxosJson = new JSONObject();
 		paxosJson.put("action", Communication.PAXOS_REQUEST);
 		paxosJson.put("transaction", transaction.getName());
-		paxosJson.put("buffer", serializeBuffer(writeBuffer));
+		paxosJson.put("buffer", getJSONArray(writeBuffer));
 		paxosJson.put("version", System.currentTimeMillis());
 
 		// Send Paxos accept request to all the coordinators
 		String corrID = UUID.randomUUID().toString();
-		BasicProperties props = new BasicProperties.Builder()
-				.correlationId(corrID).replyTo(replyQueue).build();
+		BasicProperties props = new BasicProperties.Builder().correlationId(corrID).replyTo(replyQueue).build();
 		for (String coordinator : coordinators) {
-			delayedPublish(coordinator, Communication.EXCHANGE_COORDINATORS,
-					coordinator, props, paxosJson.toString().getBytes());
+			delayedPublish(coordinator, Communication.EXCHANGE_COORDINATORS, coordinator, props,
+					paxosJson.toString().getBytes());
 		}
 
-		while (paxosPool.getAcceptCount() + paxosPool.getRejectCount() < coordinators
-				.size()
+		while (paxosPool.getAcceptCount() + paxosPool.getRejectCount() < coordinators.size()
 				|| paxosPool.getAcceptCount() <= coordinators.size() / 2) {
 			// wait for majority
 			Delivery delivery = queueingConsumer.nextDelivery();
@@ -185,8 +174,7 @@ public class Client {
 		boolean result;
 		if (paxosPool.getAcceptCount() > coordinators.size() / 2) {
 			// commit success from client's view
-			System.out.println("Client " + name + " successfully commits "
-					+ transaction.getName() + ".");
+			System.out.println("Client " + name + " successfully commits " + transaction.getName() + ".");
 			result = true;
 		} else {
 			// abort
@@ -196,19 +184,21 @@ public class Client {
 		return result;
 	}
 
-	public String serializeBuffer(List<Operation> writeBuffer) {
+	public JSONArray getJSONArray(List<Operation> writeBuffer) throws JSONException {
+		JSONArray jsonArray = new JSONArray();
 		if (writeBuffer.isEmpty())
-			return ",";
-		String serializedBuffer = "";
+			return jsonArray;
 		for (Operation operation : writeBuffer) {
-			serializedBuffer += operation.getKey() + ":" + operation.getValue()
-					+ ",";
+			JSONObject json = new JSONObject();
+			json.put("key", operation.getKey());
+			json.put("value", operation.getValue());
+			jsonArray.put(json);
 		}
-		return serializedBuffer;
+		return jsonArray;
 	}
 
-	public void delayedPublish(String to, final String exchange,
-			final String routing, final BasicProperties props, final byte[] body) {
+	public void delayedPublish(String to, final String exchange, final String routing, final BasicProperties props,
+			final byte[] body) {
 		final Integer delay = oneWayLatency.get(to);
 		new Thread() {
 			@Override

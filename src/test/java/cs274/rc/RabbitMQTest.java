@@ -36,96 +36,96 @@ public class RabbitMQTest extends TestCase {
 
 	public void testChannel() throws IOException, TimeoutException,
 			InterruptedException {
-		System.out.println("testChannel");
-		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost("localhost");
-		Connection connection1 = factory.newConnection();
-		Channel channel1 = connection1.createChannel();
-		Connection connection2 = factory.newConnection();
-		final Channel channel2 = connection2.createChannel();
-		Connection connection3 = factory.newConnection();
-		Channel channel3 = connection3.createChannel();
-
-		Consumer consumer = new DefaultConsumer(channel2) {
-
-			@Override
-			public void handleDelivery(String consumerTag, Envelope envelope,
-					BasicProperties properties, byte[] body) throws IOException {
-				String message = new String(body, "UTF-8");
-				String replyTo = properties.getReplyTo();
-				String corrID = properties.getCorrelationId();
-				BasicProperties replyProps = new BasicProperties.Builder()
-						.correlationId(corrID).build();
-				System.out.println(consumerTag + " [x] Received '" + message
-						+ "'   " + replyTo);
-				channel2.basicPublish("", replyTo, replyProps,
-						"ACK!!".getBytes());
-			}
-		};
-		channel2.exchangeDeclare(EXCHANGE_NAME, "direct");
-		String queueName2 = channel2.queueDeclare().getQueue();
-		channel2.queueBind(queueName2, EXCHANGE_NAME, "");
-		System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
-		channel2.basicConsume(queueName2, true, consumer);
-
-		channel3.exchangeDeclare(EXCHANGE_NAME, "direct");
-		String queueName3 = channel3.queueDeclare().getQueue();
-		channel3.queueBind(queueName3, EXCHANGE_NAME, "");
-		System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
-		channel3.basicConsume(queueName3, true, consumer);
-
-		Thread.sleep(500);
-		String message = "Hello World!";
-		channel1.exchangeDeclare(EXCHANGE_NAME, "direct");
-		String queueName1 = channel1.queueDeclare().getQueue();
-		String corrID = UUID.randomUUID().toString();
-		String replyQueueName = channel1.queueDeclare().getQueue();
-		BasicProperties props = new BasicProperties.Builder()
-				.correlationId(corrID).replyTo(replyQueueName).build();
-		QueueingConsumer qConsumer = new QueueingConsumer(channel1);
-		channel1.queueBind(queueName1, EXCHANGE_NAME, "");
-		channel1.basicConsume(queueName1, true, consumer);
-		channel1.basicConsume(replyQueueName, true, qConsumer);
-		channel1.basicPublish(EXCHANGE_NAME, "", props, message.getBytes());
-		System.out.println(" [x] Sent '" + message + "'");
-		int cnt = 0;
-		while (cnt < 3) {
-			Delivery delivery = qConsumer.nextDelivery();
-			if (delivery.getProperties().getCorrelationId().equals(corrID)) {
-				System.out.println(new String(delivery.getBody()));
-				++cnt;
-			}
-		}
-
-		channel1.close();
-		connection1.close();
+//		System.out.println("testChannel");
+//		ConnectionFactory factory = new ConnectionFactory();
+//		factory.setHost("localhost");
+//		Connection connection1 = factory.newConnection();
+//		Channel channel1 = connection1.createChannel();
+//		Connection connection2 = factory.newConnection();
+//		final Channel channel2 = connection2.createChannel();
+//		Connection connection3 = factory.newConnection();
+//		Channel channel3 = connection3.createChannel();
+//
+//		Consumer consumer = new DefaultConsumer(channel2) {
+//
+//			@Override
+//			public void handleDelivery(String consumerTag, Envelope envelope,
+//					BasicProperties properties, byte[] body) throws IOException {
+//				String message = new String(body, "UTF-8");
+//				String replyTo = properties.getReplyTo();
+//				String corrID = properties.getCorrelationId();
+//				BasicProperties replyProps = new BasicProperties.Builder()
+//						.correlationId(corrID).build();
+//				System.out.println(consumerTag + " [x] Received '" + message
+//						+ "'   " + replyTo);
+//				channel2.basicPublish("", replyTo, replyProps,
+//						"ACK!!".getBytes());
+//			}
+//		};
+//		channel2.exchangeDeclare(EXCHANGE_NAME, "direct");
+//		String queueName2 = channel2.queueDeclare().getQueue();
+//		channel2.queueBind(queueName2, EXCHANGE_NAME, "");
+//		System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+//		channel2.basicConsume(queueName2, true, consumer);
+//
+//		channel3.exchangeDeclare(EXCHANGE_NAME, "direct");
+//		String queueName3 = channel3.queueDeclare().getQueue();
+//		channel3.queueBind(queueName3, EXCHANGE_NAME, "");
+//		System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+//		channel3.basicConsume(queueName3, true, consumer);
+//
+//		Thread.sleep(500);
+//		String message = "Hello World!";
+//		channel1.exchangeDeclare(EXCHANGE_NAME, "direct");
+//		String queueName1 = channel1.queueDeclare().getQueue();
+//		String corrID = UUID.randomUUID().toString();
+//		String replyQueueName = channel1.queueDeclare().getQueue();
+//		BasicProperties props = new BasicProperties.Builder()
+//				.correlationId(corrID).replyTo(replyQueueName).build();
+//		QueueingConsumer qConsumer = new QueueingConsumer(channel1);
+//		channel1.queueBind(queueName1, EXCHANGE_NAME, "");
+//		channel1.basicConsume(queueName1, true, consumer);
+//		channel1.basicConsume(replyQueueName, true, qConsumer);
+//		channel1.basicPublish(EXCHANGE_NAME, "", props, message.getBytes());
+//		System.out.println(" [x] Sent '" + message + "'");
+//		int cnt = 0;
+//		while (cnt < 3) {
+//			Delivery delivery = qConsumer.nextDelivery();
+//			if (delivery.getProperties().getCorrelationId().equals(corrID)) {
+//				System.out.println(new String(delivery.getBody()));
+//				++cnt;
+//			}
+//		}
+//
+//		channel1.close();
+//		connection1.close();
 	}
 
 	public void testDirect() throws IOException, TimeoutException,
 			InterruptedException {
 		System.out.println("testDirect");
-		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost("localhost");
-		Connection connection1 = factory.newConnection();
-		Channel channel1 = connection1.createChannel();
-		channel1.exchangeDeclare(EXCHANGE_NAME, "direct");
-		String queueName = channel1.queueDeclare().getQueue();
-		channel1.queueBind(queueName, EXCHANGE_NAME, "routing");
-		QueueingConsumer consumer = new QueueingConsumer(channel1);
-		channel1.basicConsume(queueName, true, consumer);
-
-		Channel channel2 = connection1.createChannel();
-		channel2.exchangeDeclare(EXCHANGE_NAME, "direct");
-		BasicProperties props = new BasicProperties.Builder()
-				.correlationId("uuid").replyTo("reply").build();
-		channel2.basicPublish(EXCHANGE_NAME, "routing", null, "TEST".getBytes());
-		while (true) {
-			QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-			String message = new String(delivery.getBody());
-			String routingKey = delivery.getEnvelope().getRoutingKey();
-
-			System.out.println(" [x] Received '" + routingKey + "':'" + message
-					+ "'");
-		}
+//		ConnectionFactory factory = new ConnectionFactory();
+//		factory.setHost("localhost");
+//		Connection connection1 = factory.newConnection();
+//		Channel channel1 = connection1.createChannel();
+//		channel1.exchangeDeclare(EXCHANGE_NAME, "direct");
+//		String queueName = channel1.queueDeclare().getQueue();
+//		channel1.queueBind(queueName, EXCHANGE_NAME, "routing");
+//		QueueingConsumer consumer = new QueueingConsumer(channel1);
+//		channel1.basicConsume(queueName, true, consumer);
+//
+//		Channel channel2 = connection1.createChannel();
+//		channel2.exchangeDeclare(EXCHANGE_NAME, "direct");
+//		BasicProperties props = new BasicProperties.Builder()
+//				.correlationId("uuid").replyTo("reply").build();
+//		channel2.basicPublish(EXCHANGE_NAME, "routing", null, "TEST".getBytes());
+//		while (true) {
+//			QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+//			String message = new String(delivery.getBody());
+//			String routingKey = delivery.getEnvelope().getRoutingKey();
+//
+//			System.out.println(" [x] Received '" + routingKey + "':'" + message
+//					+ "'");
+//		}
 	}
 }

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -54,8 +55,7 @@ public class Server extends Thread {
 	private HashMap<String, Integer> oneWayLatency;
 	private List<String> coordinators;
 
-	public Server(String name, boolean coordinator, String shardExchange,
-			int shardNum, int coordinatorNum) {
+	public Server(String name, boolean coordinator, String shardExchange, int shardNum, int coordinatorNum) {
 		this.name = name;
 		this.coordinator = coordinator;
 		this.shardExchange = shardExchange;
@@ -101,13 +101,13 @@ public class Server extends Thread {
 		}
 	}
 
-	public void startCoordinator() throws IOException, ShutdownSignalException,
-			ConsumerCancelledException, InterruptedException, JSONException {
+	public void startCoordinator() throws IOException, ShutdownSignalException, ConsumerCancelledException,
+			InterruptedException, JSONException {
 		Consumer readConsumer = new DefaultConsumer(channel) {
 
 			@Override
-			public void handleDelivery(String consumerTag, Envelope envelope,
-					BasicProperties properties, byte[] body) throws IOException {
+			public void handleDelivery(String consumerTag, Envelope envelope, BasicProperties properties, byte[] body)
+					throws IOException {
 				String message = new String(body, "UTF-8");
 				String replyTo = properties.getReplyTo();
 				String corrID = properties.getCorrelationId();
@@ -115,8 +115,7 @@ public class Server extends Thread {
 					JSONObject json = new JSONObject(message);
 					int action = json.getInt("action");
 					if (action == Communication.READ_REQUEST) {
-						handleRead(json.getString("key"),
-								json.getString("transaction"), corrID, replyTo);
+						handleRead(json.getString("key"), json.getString("transaction"), corrID, replyTo);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -148,29 +147,27 @@ public class Server extends Thread {
 			String replyTo = delivery.getProperties().getReplyTo();
 			switch (action) {
 			case Communication.PAXOS_REQUEST:
-				handlePaxosRequest(json.getString("buffer"),
-						json.getString("transaction"), json.getLong("version"),
-						corrID, replyTo);
+				handlePaxosRequest(new JSONArray(json.getString("buffer")), json.getString("transaction"),
+						json.getLong("version"), corrID, replyTo);
 				break;
 			case Communication.TPC_PREPARE:
-				handle2PCPrepare(json.getString("buffer").split(","),
-						json.getString("transaction"), corrID, replyTo);
+				handle2PCPrepare(new JSONArray(json.getString("buffer")), json.getString("transaction"), corrID,
+						replyTo);
 				break;
 			case Communication.TPC_COMMIT:
-				handle2PCCommit(json.getLong("version"),
-						json.getString("transaction"));
+				handle2PCCommit(json.getLong("version"), json.getString("transaction"));
 				break;
 			}
 		}
 	}
 
-	public void startCohort() throws IOException, ShutdownSignalException,
-			ConsumerCancelledException, InterruptedException, JSONException {
+	public void startCohort() throws IOException, ShutdownSignalException, ConsumerCancelledException,
+			InterruptedException, JSONException {
 		Consumer readConsumer = new DefaultConsumer(channel) {
 
 			@Override
-			public void handleDelivery(String consumerTag, Envelope envelope,
-					BasicProperties properties, byte[] body) throws IOException {
+			public void handleDelivery(String consumerTag, Envelope envelope, BasicProperties properties, byte[] body)
+					throws IOException {
 				String message = new String(body, "UTF-8");
 				String replyTo = properties.getReplyTo();
 				String corrID = properties.getCorrelationId();
@@ -178,8 +175,7 @@ public class Server extends Thread {
 					JSONObject json = new JSONObject(message);
 					int action = json.getInt("action");
 					if (action == Communication.READ_REQUEST) {
-						handleRead(json.getString("key"),
-								json.getString("transaction"), corrID, replyTo);
+						handleRead(json.getString("key"), json.getString("transaction"), corrID, replyTo);
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -204,12 +200,11 @@ public class Server extends Thread {
 			String replyTo = delivery.getProperties().getReplyTo();
 			switch (action) {
 			case Communication.TPC_PREPARE:
-				handle2PCPrepare(json.getString("buffer").split(","),
-						json.getString("transaction"), corrID, replyTo);
+				handle2PCPrepare(new JSONArray(json.getString("buffer")), json.getString("transaction"), corrID,
+						replyTo);
 				break;
 			case Communication.TPC_COMMIT:
-				handle2PCCommit(json.getLong("version"),
-						json.getString("transaction"));
+				handle2PCCommit(json.getLong("version"), json.getString("transaction"));
 				break;
 			}
 		}
@@ -221,9 +216,8 @@ public class Server extends Thread {
 		return datastore.get(key).getValue();
 	}
 
-	private void handleRead(String key, String transaction, String corrID,
-			String replyTo) throws NumberFormatException, UnknownHostException,
-			IOException, JSONException {
+	private void handleRead(String key, String transaction, String corrID, String replyTo)
+			throws NumberFormatException, UnknownHostException, IOException, JSONException {
 		// set the shared lock
 		if (lockManager.setShared(key, transaction)) {
 			// successfully set, return the latest version
@@ -234,42 +228,34 @@ public class Server extends Thread {
 			json.put("action", Communication.READ_ACCEPT);
 			json.put("value", value);
 			json.put("version", version);
-			BasicProperties replyProps = new BasicProperties.Builder()
-					.correlationId(corrID).build();
-			delayedPublish("client", "", replyTo, replyProps, json.toString()
-					.getBytes());
+			BasicProperties replyProps = new BasicProperties.Builder().correlationId(corrID).build();
+			delayedPublish("client", "", replyTo, replyProps, json.toString().getBytes());
 		} else {
 			System.out.println("Cannot set " + key + " for " + transaction);
 			// can't acquire the lock
 			JSONObject json = new JSONObject();
 			json.put("action", Communication.READ_REJECT);
-			BasicProperties replyProps = new BasicProperties.Builder()
-					.correlationId(corrID).build();
-			delayedPublish("client", "", replyTo, replyProps, json.toString()
-					.getBytes());
+			BasicProperties replyProps = new BasicProperties.Builder().correlationId(corrID).build();
+			delayedPublish("client", "", replyTo, replyProps, json.toString().getBytes());
 		}
 	}
 
-	private void handlePaxosRequest(String writeBuffer, String transaction,
-			long version, String clientCorrID, String clientReplyTo)
-			throws UnknownHostException, IOException, JSONException,
-			ShutdownSignalException, ConsumerCancelledException,
-			InterruptedException {
+	private void handlePaxosRequest(JSONArray writeBuffer, String transaction, long version, String clientCorrID,
+			String clientReplyTo) throws UnknownHostException, IOException, JSONException, ShutdownSignalException,
+					ConsumerCancelledException, InterruptedException {
 		// send 2PC prepare to cohorts and self
 		TPCPool tpcPool = new TPCPool();
 
 		// wait until all reply
 		JSONObject tpcJson = new JSONObject();
 		tpcJson.put("action", Communication.TPC_PREPARE);
-		tpcJson.put("buffer", writeBuffer);
+		tpcJson.put("buffer", writeBuffer.toString());
 		tpcJson.put("transaction", transaction);
 		String tpcCorrID = UUID.randomUUID().toString();
-		BasicProperties props = new BasicProperties.Builder()
-				.correlationId(tpcCorrID).replyTo(replyQueue).build();
+		BasicProperties props = new BasicProperties.Builder().correlationId(tpcCorrID).replyTo(replyQueue).build();
 		// intra DC
-		delayedPublish("", shardExchange, "", props, tpcJson.toString()
-				.getBytes());
-		if (handle2PCPrepareSelf(writeBuffer.split(","), transaction)) {
+		delayedPublish("", shardExchange, "", props, tpcJson.toString().getBytes());
+		if (handle2PCPrepareSelf(writeBuffer, transaction)) {
 			tpcPool.addAccept();
 		} else {
 			tpcPool.addReject();
@@ -297,10 +283,8 @@ public class Server extends Thread {
 			tpcResult = false;
 			paxosReplyJson.put("action", Communication.PAXOS_REJECT);
 		}
-		BasicProperties replyProps = new BasicProperties.Builder()
-				.correlationId(clientCorrID).build();
-		delayedPublish("client", "", clientReplyTo, replyProps, paxosReplyJson
-				.toString().getBytes());
+		BasicProperties replyProps = new BasicProperties.Builder().correlationId(clientCorrID).build();
+		delayedPublish("client", "", clientReplyTo, replyProps, paxosReplyJson.toString().getBytes());
 
 		PaxosPool paxosPool = new PaxosPool(transaction);
 		if (tpcResult) {
@@ -309,16 +293,14 @@ public class Server extends Thread {
 			paxosPool.addReject();
 		}
 		for (String coordinator : coordinators) {
-			delayedPublish(coordinator, Communication.EXCHANGE_COORDINATORS,
-					coordinator, replyProps, paxosReplyJson.toString()
-							.getBytes());
+			delayedPublish(coordinator, Communication.EXCHANGE_COORDINATORS, coordinator, replyProps,
+					paxosReplyJson.toString().getBytes());
 		}
 		while (paxosPool.getAcceptCount() + paxosPool.getRejectCount() < coordinatorNum
 				&& paxosPool.getAcceptCount() <= coordinatorNum / 2) {
 			// Wait for majority
 			Delivery delivery = paxosQueueingConsumer.nextDelivery();
-			if (delivery.getProperties().getCorrelationId()
-					.equals(clientCorrID)) {
+			if (delivery.getProperties().getCorrelationId().equals(clientCorrID)) {
 				JSONObject json = new JSONObject(new String(delivery.getBody()));
 				int action = json.getInt("action");
 				if (action == Communication.PAXOS_ACCEPT) {
@@ -328,8 +310,7 @@ public class Server extends Thread {
 				}
 			}
 		}
-		System.out.println("Server " + name
-				+ " received from majority, start 2PC commit.");
+		System.out.println("Server " + name + " received from majority, start 2PC commit.");
 
 		/*
 		 * Send 2PC commit. cohorts who receive this should log commit and
@@ -341,26 +322,27 @@ public class Server extends Thread {
 			json.put("version", version);
 			json.put("transaction", transaction);
 			// intra DC
-			delayedPublish("", shardExchange, "", null, json.toString()
-					.getBytes());
+			delayedPublish("", shardExchange, "", null, json.toString().getBytes());
 
 			handle2PCCommit(version, transaction);
 		}
 	}
 
-	private void handle2PCPrepare(String[] writeBuffer, String transaction,
-			String corrID, String replyTo) throws UnknownHostException,
-			IOException, JSONException {
+	private void handle2PCPrepare(JSONArray writeBuffer, String transaction, String corrID, String replyTo)
+			throws JSONException {
 		// acquire all the exclusive locks
 		List<String> keys = new ArrayList<String>();
-		for (String writeOp : writeBuffer) {
-			keys.add(writeOp.split(":")[0]);
+		for (int i = 0; i < writeBuffer.length(); ++i) {
+			JSONObject writeOp = writeBuffer.getJSONObject(i);
+			keys.add(writeOp.getString("key"));
 		}
 		if (lockManager.testExclusive(keys)) {
 			LogEntry logEntry = new LogEntry(transaction, LogEntry.TPC_PREPARE);
-			for (String writeOp : writeBuffer) {
-				String key = writeOp.split(":")[0];
-				String value = writeOp.split(":")[1];
+			for (int i = 0; i < writeBuffer.length(); ++i) {
+				JSONObject writeOp = writeBuffer.getJSONObject(i);
+				keys.add(writeOp.getString("key"));
+				String key = writeOp.getString("key");
+				String value = writeOp.getString("value");
 				logEntry.addWrite(key, value);
 				lockManager.setExclusive(key, transaction);
 			}
@@ -369,32 +351,32 @@ public class Server extends Thread {
 			System.out.println("Server " + name + " locks: log 2PC prepare.");
 			JSONObject json = new JSONObject();
 			json.put("action", Communication.TPC_ACCEPT);
-			BasicProperties props = new BasicProperties.Builder()
-					.correlationId(corrID).build();
+			BasicProperties props = new BasicProperties.Builder().correlationId(corrID).build();
 			delayedPublish("", "", replyTo, props, json.toString().getBytes());
 		} else {
 			lockManager.unlockAllExclusiveByTransaction(transaction);
 			JSONObject json = new JSONObject();
 			json.put("action", Communication.TPC_REJECT);
-			BasicProperties props = new BasicProperties.Builder()
-					.correlationId(corrID).build();
+			BasicProperties props = new BasicProperties.Builder().correlationId(corrID).build();
 			// intra DC
 			delayedPublish("", "", replyTo, props, json.toString().getBytes());
 		}
 	}
 
-	private boolean handle2PCPrepareSelf(String[] writeBuffer,
-			String transaction) {
+	private boolean handle2PCPrepareSelf(JSONArray writeBuffer, String transaction) throws JSONException {
 		// acquire all the exclusive locks
 		List<String> keys = new ArrayList<String>();
-		for (String writeOp : writeBuffer) {
-			keys.add(writeOp.split(":")[0]);
+		for (int i = 0; i < writeBuffer.length(); ++i) {
+			JSONObject writeOp = writeBuffer.getJSONObject(i);
+			keys.add(writeOp.getString("key"));
 		}
 		if (lockManager.testExclusive(keys)) {
 			LogEntry logEntry = new LogEntry(transaction, LogEntry.TPC_PREPARE);
-			for (String writeOp : writeBuffer) {
-				String key = writeOp.split(":")[0];
-				String value = writeOp.split(":")[1];
+			for (int i = 0; i < writeBuffer.length(); ++i) {
+				JSONObject writeOp = writeBuffer.getJSONObject(i);
+				keys.add(writeOp.getString("key"));
+				String key = writeOp.getString("key");
+				String value = writeOp.getString("value");
 				logEntry.addWrite(key, value);
 				lockManager.setExclusive(key, transaction);
 			}
@@ -411,12 +393,11 @@ public class Server extends Thread {
 	private void handle2PCCommit(long version, String transaction) {
 		abstractLog.commit(version, transaction);
 		lockManager.unlockAllExclusiveByTransaction(transaction);
-		System.out.println("Server " + name
-				+ " committed locally and released the locks.");
+		System.out.println("Server " + name + " committed locally and released the locks.");
 	}
 
-	public void delayedPublish(String to, final String exchange,
-			final String routing, final BasicProperties props, final byte[] body) {
+	public void delayedPublish(String to, final String exchange, final String routing, final BasicProperties props,
+			final byte[] body) {
 		final Integer delay = oneWayLatency.get(to);
 		new Thread() {
 			@Override
