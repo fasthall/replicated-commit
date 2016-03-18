@@ -1,7 +1,6 @@
 package cs274.rc;
 
 import java.util.HashMap;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.Vector;
@@ -40,7 +39,7 @@ public class YCSBClient extends com.yahoo.ycsb.DB {
 
 	@Override
 	public Status read(String table, String key, Set<String> fields, HashMap<String, ByteIterator> result) {
-		System.out.println("read");
+//		System.out.println("read");
 		Transaction transaction = new Transaction();
 		transaction.addReadOperation(key);
 		try {
@@ -56,7 +55,7 @@ public class YCSBClient extends com.yahoo.ycsb.DB {
 	@Override
 	public Status scan(String table, String key, int recordcount, Set<String> fields,
 			Vector<HashMap<String, ByteIterator>> result) {
-		System.out.println("scan");
+//		System.out.println("scan");
 		Transaction transaction = new Transaction();
 		transaction.addReadOperation(key);
 		try {
@@ -71,7 +70,7 @@ public class YCSBClient extends com.yahoo.ycsb.DB {
 
 	@Override
 	public Status insert(String table, String key, HashMap<String, ByteIterator> values) {
-		System.out.println("insert");
+//		System.out.println("insert");
 		Transaction transaction = new Transaction();
 		transaction.addWriteOperation(key, new JSONObject(values).toString());
 		try {
@@ -86,12 +85,9 @@ public class YCSBClient extends com.yahoo.ycsb.DB {
 
 	@Override
 	public Status update(String table, String key, HashMap<String, ByteIterator> values) {
-		System.out.println("update " + key + " " + new JSONObject(values).toString());
-		Random r = new Random();
+//		System.out.println("update " + key + " " + new JSONObject(values).toString());
 		Transaction transaction = new Transaction();
-		transaction.addReadOperation(r.nextInt(10) + "");
-		transaction.addReadOperation(r.nextInt(10) + "");
-		transaction.addWriteOperation(r.nextInt(10) + "", new JSONObject(values).toString());
+		transaction.addWriteOperation(key, new JSONObject(values).toString());
 		try {
 			if (client1.put(transaction)) {
 				return Status.OK;
