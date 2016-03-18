@@ -39,6 +39,18 @@ public class CommunicationTest extends TestCase {
 		Server dc3_0 = new Server("DC3_0", true, "dc3", 3, 3);
 		Server dc3_1 = new Server("DC3_1", false, "dc3", 3, 3);
 		Server dc3_2 = new Server("DC3_2", false, "dc3", 3, 3);
+		dc1_0.addCoordinators("DC1_0", "DC2_0", "DC3_0");
+		dc2_0.addCoordinators("DC1_0", "DC2_0", "DC3_0");
+		dc3_0.addCoordinators("DC1_0", "DC2_0", "DC3_0");
+		dc1_0.addOneWayLatency("client", 40);
+		dc1_1.addOneWayLatency("client", 40);
+		dc1_2.addOneWayLatency("client", 40);
+		dc2_0.addOneWayLatency("client", 50);
+		dc2_1.addOneWayLatency("client", 50);
+		dc2_2.addOneWayLatency("client", 50);
+		dc3_0.addOneWayLatency("client", 60);
+		dc3_1.addOneWayLatency("client", 60);
+		dc3_2.addOneWayLatency("client", 60);
 		dc1_0.start();
 		dc1_1.start();
 		dc1_2.start();
@@ -49,7 +61,19 @@ public class CommunicationTest extends TestCase {
 		dc3_1.start();
 		dc3_2.start();
 
-		Client client1 = new Client("C1", 9, 3);
+		Client client1 = new Client("C1");
+		client1.addReplicas("DC1_0", "DC1_1", "DC1_2", "DC2_0", "DC2_1",
+				"DC2_2", "DC3_0", "DC3_1", "DC3_2");
+		client1.addCoordinator("DC1_0", "DC2_0", "DC3_0");
+		client1.addOneWayLatency("DC1_0", 40);
+		client1.addOneWayLatency("DC1_1", 40);
+		client1.addOneWayLatency("DC1_2", 40);
+		client1.addOneWayLatency("DC2_0", 50);
+		client1.addOneWayLatency("DC2_1", 50);
+		client1.addOneWayLatency("DC2_2", 50);
+		client1.addOneWayLatency("DC3_0", 60);
+		client1.addOneWayLatency("DC3_1", 60);
+		client1.addOneWayLatency("DC3_2", 60);
 		Thread.sleep(50);
 		for (int i = 0; i < 100; ++i) {
 			Transaction t1 = new Transaction();

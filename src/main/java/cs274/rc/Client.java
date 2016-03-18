@@ -3,6 +3,7 @@ package cs274.rc;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,25 +26,28 @@ import com.rabbitmq.client.ShutdownSignalException;
 public class Client {
 
 	private String name;
-	private int replicaNum;
-	private int coordinatorNum;
 
 	private Channel channel;
 	private QueueingConsumer queueingConsumer;
 	private String replyQueue;
+	private List<String> replicas;
+	private List<String> coordinators;
+	private HashMap<String, Integer> oneWayLatency;
 
-	public Client(String name, int replicaNum, int coordinatorNum) {
+	public Client(String name) {
 		this.name = name;
-		this.replicaNum = replicaNum;
-		this.coordinatorNum = coordinatorNum;
+		replicas = new ArrayList<String>();
+		coordinators = new ArrayList<String>();
+		oneWayLatency = new HashMap<String, Integer>();
 
 		ConnectionFactory factory = new ConnectionFactory();
 		factory.setHost("localhost");
 		try {
 			Connection connection = factory.newConnection();
 			channel = connection.createChannel();
-			channel.exchangeDeclare(Communication.EXCHANGE_COORDINATORS, "fanout");
-			channel.exchangeDeclare(Communication.EXCHANGE_REPLICAS, "fanout");
+			channel.exchangeDeclare(Communication.EXCHANGE_COORDINATORS,
+					"direct");
+			channel.exchangeDeclare(Communication.EXCHANGE_REPLICAS, "direct");
 			queueingConsumer = new QueueingConsumer(channel);
 			replyQueue = channel.queueDeclare().getQueue();
 			channel.basicConsume(replyQueue, true, queueingConsumer);
@@ -52,8 +56,25 @@ public class Client {
 		}
 	}
 
-	public boolean put(Transaction transaction) throws UnknownHostException, IOException, ShutdownSignalException,
-			ConsumerCancelledException, JSONException, InterruptedException {
+	public void addReplicas(String... names) {
+		for (String n : names) {
+			replicas.add(n);
+		}
+	}
+
+	public void addCoordinator(String... names) {
+		for (String n : names) {
+			coordinators.add(n);
+		}
+	}
+
+	public void addOneWayLatency(String to, int latency) {
+		oneWayLatency.put(to, latency);
+	}
+
+	public boolean put(Transaction transaction) throws UnknownHostException,
+			IOException, ShutdownSignalException, ConsumerCancelledException,
+			JSONException, InterruptedException {
 		boolean result = false;
 		List<Operation> writeBuffer = new ArrayList<Operation>();
 		while (true) {
@@ -78,22 +99,29 @@ public class Client {
 		return result;
 	}
 
-	private boolean sendReadRequest(Transaction transaction, Operation operation) throws UnknownHostException,
-			IOException, ShutdownSignalException, ConsumerCancelledException, InterruptedException, JSONException {
+	private boolean sendReadRequest(Transaction transaction, Operation operation)
+			throws UnknownHostException, IOException, ShutdownSignalException,
+			ConsumerCancelledException, InterruptedException, JSONException {
 		boolean result = true;
-		ReadingPool readingPool = new ReadingPool(transaction.getName(), operation.getKey());
-		JSONObject readJson = new JSONObject();
+		ReadingPool readingPool = new ReadingPool(transaction.getName(),
+				operation.getKey());
+		final JSONObject readJson = new JSONObject();
 		readJson.put("action", Communication.READ_REQUEST);
 		readJson.put("transaction", transaction.getName());
 		readJson.put("key", operation.getKey());
 
 		// Send read request to all replicas
 		String corrID = UUID.randomUUID().toString();
-		BasicProperties props = new BasicProperties.Builder().correlationId(corrID).replyTo(replyQueue).build();
-		channel.basicPublish(Communication.EXCHANGE_REPLICAS, "", props, readJson.toString().getBytes());
+		final BasicProperties props = new BasicProperties.Builder()
+				.correlationId(corrID).replyTo(replyQueue).build();
+		for (String replica : replicas) {
+			delayedPublish(replica, Communication.EXCHANGE_REPLICAS, replica,
+					props, readJson.toString().getBytes());
+		}
 
-		while (readingPool.getSize() <= replicaNum / 2
-				&& readingPool.getSize() + readingPool.getReject() < replicaNum) {
+		while (readingPool.getSize() <= replicas.size() / 2
+				&& readingPool.getSize() + readingPool.getReject() < replicas
+						.size()) {
 			// Waiting data from majority
 			Delivery delivery = queueingConsumer.nextDelivery();
 			if (delivery.getProperties().getCorrelationId().equals(corrID)) {
@@ -107,19 +135,22 @@ public class Client {
 				}
 			}
 		}
-		if (readingPool.getSize() <= replicaNum / 2) {
+		if (readingPool.getSize() <= replicas.size() / 2) {
 			result = false;
 			System.out.println("Read " + operation.getKey() + " aborts.");
 		} else {
 			String value = readingPool.getMostRecentValue();
-			System.out.println("Most recent data of " + operation.getKey() + " is " + value);
+			System.out.println("Most recent data of " + operation.getKey()
+					+ " is " + value);
 		}
 		readingPool = null;
 		return result;
 	}
 
-	private boolean sendPaxosRequest(Transaction transaction, List<Operation> writeBuffer) throws UnknownHostException,
-			IOException, JSONException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
+	private boolean sendPaxosRequest(Transaction transaction,
+			List<Operation> writeBuffer) throws UnknownHostException,
+			IOException, JSONException, ShutdownSignalException,
+			ConsumerCancelledException, InterruptedException {
 		PaxosPool paxosPool = new PaxosPool(transaction.getName());
 		JSONObject paxosJson = new JSONObject();
 		paxosJson.put("action", Communication.PAXOS_REQUEST);
@@ -129,11 +160,16 @@ public class Client {
 
 		// Send Paxos accept request to all the coordinators
 		String corrID = UUID.randomUUID().toString();
-		BasicProperties props = new BasicProperties.Builder().correlationId(corrID).replyTo(replyQueue).build();
-		channel.basicPublish(Communication.EXCHANGE_COORDINATORS, "", props, paxosJson.toString().getBytes());
+		BasicProperties props = new BasicProperties.Builder()
+				.correlationId(corrID).replyTo(replyQueue).build();
+		for (String coordinator : coordinators) {
+			delayedPublish(coordinator, Communication.EXCHANGE_COORDINATORS,
+					coordinator, props, paxosJson.toString().getBytes());
+		}
 
-		while (paxosPool.getAcceptCount() + paxosPool.getRejectCount() < coordinatorNum
-				|| paxosPool.getAcceptCount() <= coordinatorNum / 2) {
+		while (paxosPool.getAcceptCount() + paxosPool.getRejectCount() < coordinators
+				.size()
+				|| paxosPool.getAcceptCount() <= coordinators.size() / 2) {
 			// wait for majority
 			Delivery delivery = queueingConsumer.nextDelivery();
 			if (delivery.getProperties().getCorrelationId().equals(corrID)) {
@@ -147,9 +183,10 @@ public class Client {
 		}
 
 		boolean result;
-		if (paxosPool.getAcceptCount() > coordinatorNum / 2) {
+		if (paxosPool.getAcceptCount() > coordinators.size() / 2) {
 			// commit success from client's view
-			System.out.println("Client " + name + " successfully commits " + transaction.getName() + ".");
+			System.out.println("Client " + name + " successfully commits "
+					+ transaction.getName() + ".");
 			result = true;
 		} else {
 			// abort
@@ -164,8 +201,28 @@ public class Client {
 			return ",";
 		String serializedBuffer = "";
 		for (Operation operation : writeBuffer) {
-			serializedBuffer += operation.getKey() + ":" + operation.getValue() + ",";
+			serializedBuffer += operation.getKey() + ":" + operation.getValue()
+					+ ",";
 		}
 		return serializedBuffer;
+	}
+
+	public void delayedPublish(String to, final String exchange,
+			final String routing, final BasicProperties props, final byte[] body) {
+		final Integer delay = oneWayLatency.get(to);
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(delay == null ? 0 : delay);
+					channel.basicPublish(exchange, routing, props, body);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}.start();
+
 	}
 }

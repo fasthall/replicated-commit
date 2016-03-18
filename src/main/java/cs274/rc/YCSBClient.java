@@ -16,7 +16,7 @@ public class YCSBClient extends com.yahoo.ycsb.DB {
 
 	@Override
 	public void init() throws DBException {
-		client = new Client("client", 9, 3);
+		client = new Client("client");
 	}
 
 	@Override

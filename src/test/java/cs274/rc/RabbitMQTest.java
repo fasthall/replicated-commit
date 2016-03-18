@@ -62,13 +62,13 @@ public class RabbitMQTest extends TestCase {
 						"ACK!!".getBytes());
 			}
 		};
-		channel2.exchangeDeclare(EXCHANGE_NAME, "fanout");
+		channel2.exchangeDeclare(EXCHANGE_NAME, "direct");
 		String queueName2 = channel2.queueDeclare().getQueue();
 		channel2.queueBind(queueName2, EXCHANGE_NAME, "");
 		System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
 		channel2.basicConsume(queueName2, true, consumer);
 
-		channel3.exchangeDeclare(EXCHANGE_NAME, "fanout");
+		channel3.exchangeDeclare(EXCHANGE_NAME, "direct");
 		String queueName3 = channel3.queueDeclare().getQueue();
 		channel3.queueBind(queueName3, EXCHANGE_NAME, "");
 		System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
@@ -76,7 +76,7 @@ public class RabbitMQTest extends TestCase {
 
 		Thread.sleep(500);
 		String message = "Hello World!";
-		channel1.exchangeDeclare(EXCHANGE_NAME, "fanout");
+		channel1.exchangeDeclare(EXCHANGE_NAME, "direct");
 		String queueName1 = channel1.queueDeclare().getQueue();
 		String corrID = UUID.randomUUID().toString();
 		String replyQueueName = channel1.queueDeclare().getQueue();
@@ -99,5 +99,33 @@ public class RabbitMQTest extends TestCase {
 
 		channel1.close();
 		connection1.close();
+	}
+
+	public void testDirect() throws IOException, TimeoutException,
+			InterruptedException {
+		System.out.println("testDirect");
+		ConnectionFactory factory = new ConnectionFactory();
+		factory.setHost("localhost");
+		Connection connection1 = factory.newConnection();
+		Channel channel1 = connection1.createChannel();
+		channel1.exchangeDeclare(EXCHANGE_NAME, "direct");
+		String queueName = channel1.queueDeclare().getQueue();
+		channel1.queueBind(queueName, EXCHANGE_NAME, "routing");
+		QueueingConsumer consumer = new QueueingConsumer(channel1);
+		channel1.basicConsume(queueName, true, consumer);
+
+		Channel channel2 = connection1.createChannel();
+		channel2.exchangeDeclare(EXCHANGE_NAME, "direct");
+		BasicProperties props = new BasicProperties.Builder()
+				.correlationId("uuid").replyTo("reply").build();
+		channel2.basicPublish(EXCHANGE_NAME, "routing", null, "TEST".getBytes());
+		while (true) {
+			QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+			String message = new String(delivery.getBody());
+			String routingKey = delivery.getEnvelope().getRoutingKey();
+
+			System.out.println(" [x] Received '" + routingKey + "':'" + message
+					+ "'");
+		}
 	}
 }

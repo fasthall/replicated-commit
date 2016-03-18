@@ -7,6 +7,7 @@ package cs274.rc;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,6 +51,9 @@ public class Server extends Thread {
 	private String replyQueue;
 	private String shardExchange;
 
+	private HashMap<String, Integer> oneWayLatency;
+	private List<String> coordinators;
+
 	public Server(String name, boolean coordinator, String shardExchange,
 			int shardNum, int coordinatorNum) {
 		this.name = name;
@@ -61,6 +65,9 @@ public class Server extends Thread {
 		datastore = new AbstractDatastore();
 		abstractLog = new AbstractLog(datastore);
 
+		coordinators = new ArrayList<String>();
+		oneWayLatency = new HashMap<String, Integer>();
+
 		ConnectionFactory factory = new ConnectionFactory();
 		factory.setHost("localhost");
 		try {
@@ -69,6 +76,16 @@ public class Server extends Thread {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void addCoordinators(String... names) {
+		for (String n : names) {
+			coordinators.add(n);
+		}
+	}
+
+	public void addOneWayLatency(String to, int latency) {
+		oneWayLatency.put(to, latency);
 	}
 
 	@Override
@@ -104,21 +121,23 @@ public class Server extends Thread {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				System.out.println(name + " received '" + message + "'");
 			}
 		};
-		channel.exchangeDeclare(Communication.EXCHANGE_COORDINATORS, "fanout");
-		channel.exchangeDeclare(Communication.EXCHANGE_REPLICAS, "fanout");
-		channel.exchangeDeclare(shardExchange, "fanout");
+
+		channel.exchangeDeclare(Communication.EXCHANGE_REPLICAS, "direct");
 		readQueue = channel.queueDeclare().getQueue();
-		paxosQueue = channel.queueDeclare().getQueue();
-		replyQueue = channel.queueDeclare().getQueue();
-		paxosQueueingConsumer = new QueueingConsumer(channel);
-		replyQueueingConsumer = new QueueingConsumer(channel);
-		channel.queueBind(readQueue, Communication.EXCHANGE_REPLICAS, "");
+		channel.queueBind(readQueue, Communication.EXCHANGE_REPLICAS, name);
 		channel.basicConsume(readQueue, true, readConsumer);
-		channel.queueBind(paxosQueue, Communication.EXCHANGE_COORDINATORS, "");
+
+		channel.exchangeDeclare(Communication.EXCHANGE_COORDINATORS, "direct");
+		paxosQueue = channel.queueDeclare().getQueue();
+		channel.queueBind(paxosQueue, Communication.EXCHANGE_COORDINATORS, name);
+		paxosQueueingConsumer = new QueueingConsumer(channel);
 		channel.basicConsume(paxosQueue, true, paxosQueueingConsumer);
+
+		channel.exchangeDeclare(shardExchange, "direct");
+		replyQueue = channel.queueDeclare().getQueue();
+		replyQueueingConsumer = new QueueingConsumer(channel);
 		channel.basicConsume(replyQueue, true, replyQueueingConsumer);
 
 		while (true) {
@@ -165,15 +184,13 @@ public class Server extends Thread {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				System.out.println(name + " received '" + message + "'");
 			}
 		};
-		channel.exchangeDeclare(Communication.EXCHANGE_REPLICAS, "fanout");
-		channel.exchangeDeclare(shardExchange, "fanout");
+		channel.exchangeDeclare(Communication.EXCHANGE_REPLICAS, "direct");
+		channel.exchangeDeclare(shardExchange, "direct");
 		readQueue = channel.queueDeclare().getQueue();
 		String tpcQueue = channel.queueDeclare().getQueue();
-		;
-		channel.queueBind(readQueue, Communication.EXCHANGE_REPLICAS, "");
+		channel.queueBind(readQueue, Communication.EXCHANGE_REPLICAS, name);
 		channel.queueBind(tpcQueue, shardExchange, "");
 		channel.basicConsume(readQueue, true, readConsumer);
 		QueueingConsumer tpcConsumer = new QueueingConsumer(channel);
@@ -219,7 +236,7 @@ public class Server extends Thread {
 			json.put("version", version);
 			BasicProperties replyProps = new BasicProperties.Builder()
 					.correlationId(corrID).build();
-			channel.basicPublish("", replyTo, replyProps, json.toString()
+			delayedPublish("client", "", replyTo, replyProps, json.toString()
 					.getBytes());
 		} else {
 			System.out.println("Cannot set " + key + " for " + transaction);
@@ -228,7 +245,7 @@ public class Server extends Thread {
 			json.put("action", Communication.READ_REJECT);
 			BasicProperties replyProps = new BasicProperties.Builder()
 					.correlationId(corrID).build();
-			channel.basicPublish("", replyTo, replyProps, json.toString()
+			delayedPublish("client", "", replyTo, replyProps, json.toString()
 					.getBytes());
 		}
 	}
@@ -249,7 +266,8 @@ public class Server extends Thread {
 		String tpcCorrID = UUID.randomUUID().toString();
 		BasicProperties props = new BasicProperties.Builder()
 				.correlationId(tpcCorrID).replyTo(replyQueue).build();
-		channel.basicPublish(shardExchange, "", props, tpcJson.toString()
+		// intra DC
+		delayedPublish("", shardExchange, "", props, tpcJson.toString()
 				.getBytes());
 		if (handle2PCPrepareSelf(writeBuffer.split(","), transaction)) {
 			tpcPool.addAccept();
@@ -281,7 +299,7 @@ public class Server extends Thread {
 		}
 		BasicProperties replyProps = new BasicProperties.Builder()
 				.correlationId(clientCorrID).build();
-		channel.basicPublish("", clientReplyTo, replyProps, paxosReplyJson
+		delayedPublish("client", "", clientReplyTo, replyProps, paxosReplyJson
 				.toString().getBytes());
 
 		PaxosPool paxosPool = new PaxosPool(transaction);
@@ -290,8 +308,11 @@ public class Server extends Thread {
 		} else {
 			paxosPool.addReject();
 		}
-		channel.basicPublish(Communication.EXCHANGE_COORDINATORS, "",
-				replyProps, paxosReplyJson.toString().getBytes());
+		for (String coordinator : coordinators) {
+			delayedPublish(coordinator, Communication.EXCHANGE_COORDINATORS,
+					coordinator, replyProps, paxosReplyJson.toString()
+							.getBytes());
+		}
 		while (paxosPool.getAcceptCount() + paxosPool.getRejectCount() < coordinatorNum
 				&& paxosPool.getAcceptCount() <= coordinatorNum / 2) {
 			// Wait for majority
@@ -319,8 +340,10 @@ public class Server extends Thread {
 			json.put("action", Communication.TPC_COMMIT);
 			json.put("version", version);
 			json.put("transaction", transaction);
-			channel.basicPublish(shardExchange, "", null, json.toString()
+			// intra DC
+			delayedPublish("", shardExchange, "", null, json.toString()
 					.getBytes());
+
 			handle2PCCommit(version, transaction);
 		}
 	}
@@ -348,14 +371,15 @@ public class Server extends Thread {
 			json.put("action", Communication.TPC_ACCEPT);
 			BasicProperties props = new BasicProperties.Builder()
 					.correlationId(corrID).build();
-			channel.basicPublish("", replyTo, props, json.toString().getBytes());
+			delayedPublish("", "", replyTo, props, json.toString().getBytes());
 		} else {
 			lockManager.unlockAllExclusiveByTransaction(transaction);
 			JSONObject json = new JSONObject();
 			json.put("action", Communication.TPC_REJECT);
 			BasicProperties props = new BasicProperties.Builder()
 					.correlationId(corrID).build();
-			channel.basicPublish("", replyTo, props, json.toString().getBytes());
+			// intra DC
+			delayedPublish("", "", replyTo, props, json.toString().getBytes());
 		}
 	}
 
@@ -389,6 +413,25 @@ public class Server extends Thread {
 		lockManager.unlockAllExclusiveByTransaction(transaction);
 		System.out.println("Server " + name
 				+ " committed locally and released the locks.");
+	}
+
+	public void delayedPublish(String to, final String exchange,
+			final String routing, final BasicProperties props, final byte[] body) {
+		final Integer delay = oneWayLatency.get(to);
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(delay == null ? 0 : delay);
+					channel.basicPublish(exchange, routing, props, body);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}.start();
+
 	}
 
 }

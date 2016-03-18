@@ -20,6 +20,18 @@ public class App {
 		Server dc3_0 = new Server("DC3_0", true, "dc3", 3, 3);
 		Server dc3_1 = new Server("DC3_1", false, "dc3", 3, 3);
 		Server dc3_2 = new Server("DC3_2", false, "dc3", 3, 3);
+		dc1_0.addCoordinators("DC1_0", "DC2_0", "DC3_0");
+		dc2_0.addCoordinators("DC1_0", "DC2_0", "DC3_0");
+		dc3_0.addCoordinators("DC1_0", "DC2_0", "DC3_0");
+		dc1_0.addOneWayLatency("client", 40);
+		dc1_1.addOneWayLatency("client", 40);
+		dc1_2.addOneWayLatency("client", 40);
+		dc2_0.addOneWayLatency("client", 50);
+		dc2_1.addOneWayLatency("client", 50);
+		dc2_2.addOneWayLatency("client", 50);
+		dc3_0.addOneWayLatency("client", 60);
+		dc3_1.addOneWayLatency("client", 60);
+		dc3_2.addOneWayLatency("client", 60);
 		dc1_0.start();
 		dc1_1.start();
 		dc1_2.start();
@@ -30,7 +42,7 @@ public class App {
 		dc3_1.start();
 		dc3_2.start();
 
-		System.out.println("3 Datacenters are deployed.");
+		System.out.println("3 Datacenters are deployed. Each one has 3 shards");
 
 		try {
 			dc1_0.join();
